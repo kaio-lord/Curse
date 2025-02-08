@@ -1,4 +1,4 @@
-# Curse
+# Curse 📗
 
 ```text
 Surf The Cursed Web Anonymous
