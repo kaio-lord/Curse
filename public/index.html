@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curse | Main</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+    <style>
+        :root {
+            --primary-glow: rgb(0, 255, 234);
+            --secondary-glow: rgb(0, 136, 255);
+        }
+
+        .light {
+            --primary-glow: rgb(0, 195, 255);
+            --secondary-glow: rgb(0, 89, 255);
+        }
+
+        body {
+            background-color: #0a0a0a;
+            transition: background-color 0.3s ease;
+        }
+
+        .light body {
+            background-color: #1a1a2e;
+        }
+
+        .cyber-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .cyber-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .blob-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--primary-glow);
+            top: 20%;
+            left: 20%;
+            animation-delay: 0s;
+        }
+
+        .blob-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--secondary-glow);
+            top: 50%;
+            right: 20%;
+            animation-delay: -5s;
+        }
+
+        .blob-3 {
+            width: 250px;
+            height: 250px;
+            background: var(--primary-glow);
+            bottom: 10%;
+            left: 30%;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(50px, 50px) rotate(90deg); }
+            50% { transform: translate(0, 100px) rotate(180deg); }
+            75% { transform: translate(-50px, 50px) rotate(270deg); }
+        }
+
+        .cyber-card {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .light .cyber-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .cyber-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .cyber-input {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .light .cyber-input {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .cyber-input:focus {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .cyber-button {
+            background: linear-gradient(45deg, var(--primary-glow), var(--secondary-glow));
+            transition: all 0.3s ease;
+        }
+
+        .cyber-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .theme-icon-dark {
+            display: none;
+        }
+
+        .light .theme-icon-dark {
+            display: block;
+        }
+
+        .light .theme-icon-light {
+            display: none;
+        }
+
+        .toggle {
+            width: 50px;
+            height: 25px;
+            border-radius: 25px;
+            background-color: #ccc;
+            transition: background-color 0.3s ease;
+            position: relative;
+        }
+
+        .toggle .circle {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            transition: left 0.3s ease;
+        }
+
+        .toggle-on {
+            background-color: #2ecc71;
+        }
+
+        .toggle-on .circle {
+            left: 26px;
+        }
+
+        .toggle-off {
+            background-color: #e74c3c;
+        }
+
+        .toggle-off .circle {
+            left: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="cyber-bg">
+        <div class="cyber-blob blob-1"></div>
+        <div class="cyber-blob blob-2"></div>
+        <div class="cyber-blob blob-3"></div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8 relative">
+        <button 
+            id="themeToggle" 
+            class="fixed top-4 right-4 cyber-button p-2 rounded-full text-white"
+            aria-label="Toggle light mode"
+        >
+            <svg class="w-6 h-6 theme-icon-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+            <svg class="w-6 h-6 theme-icon-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+        </button>
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4 text-red" style="text-shadow: 0 0 10px var(--primary-glow)">
+                CURSE
+            </h1>
+            <p class="text-gray-300">Evade With Anonimity</p>
+        </header>
+
+        <div class="max-w-2xl mx-auto cyber-card rounded-lg p-6 mb-8">
+            <form id="proxyForm" class="space-y-4">
+                <div class="relative">
+                    <input 
+                        type="url" 
+                        id="urlInput" 
+                        placeholder="Enter URL to dive in..."
+                        class="cyber-input w-full px-4 py-3 rounded-lg outline-none text-white placeholder-gray-400"
+                        required
+                    >
+                    <button 
+                        type="submit"
+                        class="absolute right-2 top-2 cyber-button px-4 py-1 rounded-lg text-white"
+                    >
+                        Go
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6 mb-8">
+            <div class="cyber-card p-6 rounded-lg">
+                <div class="text-blue-400 mb-4">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-2 text-white">Encrypted Connection</h3>
+                <p class="text-gray-300">Secure Proxy Tunnel To Your Destination</p>
+            </div>
+
+            <div class="cyber-card p-6 rounded-lg">
+                <div class="text-blue-400 mb-4">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-2 text-white">Be The Ghost</h3>
+                <p class="text-gray-300">Become Anonymous Online</p>
+            </div>
+
+            <div class="cyber-card p-6 rounded-lg">
+                <div class="text-blue-400 mb-4">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-semibold mb-2 text-white">Cursed Speed</h3>
+                <p class="text-gray-300">Speeds Faster Than Any Other</p>
+            </div>
+        </div>
+
+        <div class="max-w-2xl mx-auto cyber-card rounded-lg p-6">
+            <h2 class="text-2xl font-semibold mb-4 text-white">System Controls</h2>
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-300">Ghost Mode</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer" checked>
+                        <div class="w-11 h-6 bg-gray-700 peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                    </label>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-300">Ad Removal</span>
+                    <div id="adRemovalToggle" class="toggle toggle-off">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-300">See Source</span>
+                    <div id="seeSourceToggle" class="toggle toggle-off">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const html = document.documentElement;
+        const themeToggle = document.getElementById('themeToggle');
+
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('light');
+            localStorage.setItem('theme', html.classList.contains('light') ? 'light' : 'dark');
+        });
+
+        if (localStorage.getItem('theme') === 'light') {
+            html.classList.add('light');
+        }
+
+        document.getElementById('proxyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const url = document.getElementById('urlInput').value;
+            console.log('Proxying:', url);
+        });
+
+        const adRemovalToggle = document.getElementById('adRemovalToggle');
+        adRemovalToggle.addEventListener('click', () => {
+            adRemovalToggle.classList.toggle('toggle-on');
+            adRemovalToggle.classList.toggle('toggle-off');
+            console.log(adRemovalToggle.classList.contains('toggle-on') ? 'Ad blocking enabled' : 'Ad blocking disabled');
+        });
+
+        const seeSourceToggle = document.getElementById('seeSourceToggle');
+        seeSourceToggle.addEventListener('click', () => {
+            seeSourceToggle.classList.toggle('toggle-on');
+            seeSourceToggle.classList.toggle('toggle-off');
+            console.log(seeSourceToggle.classList.contains('toggle-on') ? 'Inspect Element is visible' : 'Inspect Element is hidden');
+        });
+    </script>
+</body>
+</html>
