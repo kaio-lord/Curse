@@ -169,6 +169,9 @@
         .toggle-off .circle {
             left: 2px;
         }
+        #bar{position:fixed;bottom:20px;left:10%;right:10%;background:#2d2f38;text-align:center;border:3px solid #01579b;box-shadow:0 4px 20px rgba(0,0,0,0.4);border-radius:10px;} 
+        #bar nav a{color:white;padding:8px 12px;text-decoration:none;display:inline-block;}
+        #bar nav a:hover{background:#2d2f38;}
     </style>
 </head>
 <body>
@@ -255,7 +258,7 @@
             <h2 class="text-2xl font-semibold mb-4 text-white">System Controls</h2>
             <div class="space-y-4">
                 <div class="flex items-center justify-between">
-                    <span class="text-gray-300">Ghost Mode</span>
+                    <span class="text-gray-300">Custom Console</span>
                     <label class="relative inline-flex items-center cursor-pointer">
                         <input type="checkbox" class="sr-only peer" checked>
                         <div class="w-11 h-6 bg-gray-700 peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
@@ -276,6 +279,15 @@
             </div>
         </div>
     </div>
+     <div id="bar">
+        <nav>
+          <a href="/index.html">Home</a> | 
+          <a href="/092438751">Game</a> | 
+          <a href="#">Random</a> | 
+          <a href="#">About</a> | 
+          <a href="#">Host</a>
+        </nav>
+      </div> <!--sigma navbar -->
 
     <script>
         const html = document.documentElement;
