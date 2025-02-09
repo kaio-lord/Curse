@@ -426,144 +426,160 @@
             </div>
         </div>
     </div>
-
+    
+    <script src="/adblocker/curseblock.js"></script>
     <script>
-        const html = document.documentElement;
-        const themeToggle = document.getElementById('themeToggle');
-        const proxyContainer = document.getElementById('proxyContainer');
-        const proxyFrame = document.getElementById('proxyFrame');
-        const fullscreenBtn = document.getElementById('fullscreenBtn');
-        const minimizeBtn = document.getElementById('minimizeBtn');
-        const consoleContainer = document.getElementById('consoleContainer');
-        const consoleLog = document.getElementById('consoleLog');
-        const clearConsoleBtn = document.getElementById('clearConsoleBtn');
-        const detachConsoleBtn = document.getElementById('detachConsoleBtn');
-        const adBlockToggle = document.getElementById('adBlockToggle');
-        const seeSourceToggle = document.getElementById('seeSourceToggle');
-        const logsTab = document.getElementById('logsTab');
-        const sourceTab = document.getElementById('sourceTab');
-        const pageSource = document.getElementById('pageSource');
-        const consoleTabs = document.querySelectorAll('.console-tab');
+            const html = document.documentElement;
+            const themeToggle = document.getElementById('themeToggle');
+            const proxyContainer = document.getElementById('proxyContainer');
+            const proxyFrame = document.getElementById('proxyFrame');
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            const minimizeBtn = document.getElementById('minimizeBtn');
+            const consoleContainer = document.getElementById('consoleContainer');
+            const consoleLog = document.getElementById('consoleLog');
+            const clearConsoleBtn = document.getElementById('clearConsoleBtn');
+            const detachConsoleBtn = document.getElementById('detachConsoleBtn');
+            const adBlockToggle = document.getElementById('adBlockToggle');
+            const seeSourceToggle = document.getElementById('seeSourceToggle');
+            const logsTab = document.getElementById('logsTab');
+            const sourceTab = document.getElementById('sourceTab');
+            const pageSource = document.getElementById('pageSource');
+            const consoleTabs = document.querySelectorAll('.console-tab');
 
-        let isAdBlockEnabled = false;
-        let isSeeSourceEnabled = false;
-        let isConsoleDetached = false;
+            let isAdBlockEnabled = false;
+            let isSeeSourceEnabled = false;
+            let isConsoleDetached = false;
 
-        themeToggle.addEventListener('click', () => {
-            html.classList.toggle('light');
-            localStorage.setItem('theme', html.classList.contains('light') ? 'light' : 'dark');
-        });
-
-        if (localStorage.getItem('theme') === 'light') {
-            html.classList.add('light');
-        }
-
-        document.getElementById('proxyForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const input = document.getElementById('urlInput').value.trim();
-            if (!input) return;
-
-            const isUrl = isValidUrl(input);
-            const searxInstance = 'https://searx.be';
-            const proxyUrl = `/api/proxy.js?q=${encodeURIComponent(input)}${!isUrl ? '&search=true' : ''}`; //THIS IS THE REASON THIS SHIT ISNT FUCKING WORKING????????
-
-            proxyContainer.classList.remove('hidden');
-            proxyFrame.src = proxyUrl;
-
-            logToConsole(`Loading: ${input}`, 'info');
-        });
-
-        fullscreenBtn.addEventListener('click', () => {
-            proxyContainer.classList.add('fullscreen');
-            fullscreenBtn.classList.add('hidden');
-            minimizeBtn.classList.remove('hidden');
-            logToConsole('Entered fullscreen mode', 'info');
-        });
-
-        minimizeBtn.addEventListener('click', () => {
-            proxyContainer.classList.remove('fullscreen');
-            minimizeBtn.classList.add('hidden');
-            fullscreenBtn.classList.remove('hidden');
-            logToConsole('Exited fullscreen mode', 'info');
-        });
-
-        adBlockToggle.addEventListener('click', () => {
-            adBlockToggle.classList.toggle('toggle-on');
-            adBlockToggle.classList.toggle('toggle-off');
-            isAdBlockEnabled = adBlockToggle.classList.contains('toggle-on');
-            logToConsole(`Ad Block ${isAdBlockEnabled ? 'enabled' : 'disabled'}`, 'info');
-        });
-
-        seeSourceToggle.addEventListener('click', () => {
-            seeSourceToggle.classList.toggle('toggle-on');
-            seeSourceToggle.classList.toggle('toggle-off');
-            isSeeSourceEnabled = seeSourceToggle.classList.contains('toggle-on');
-            consoleContainer.style.display = 'block';
-            consoleContainer.classList.add('visible');
-
-            if (isSeeSourceEnabled) {
-                fetch(proxyFrame.src)
-                    .then(response => response.text())
-                    .then(data => {
-                        pageSource.textContent = data;
-                        logToConsole(`Fetched source for ${proxyFrame.src}`, 'info');
-                    })
-                    .catch(error => {
-                        logToConsole(`Failed to fetch source: ${error}`, 'error');
-                    });
-            } else {
-                consoleContainer.classList.remove('visible');
-                setTimeout(() => {
-                    consoleContainer.style.display = 'none';
-                }, 300);
-            }
-        });
-
-        clearConsoleBtn.addEventListener('click', () => {
-            consoleLog.innerHTML = '';
-            logToConsole('Console cleared', 'info');
-        });
-
-        detachConsoleBtn.addEventListener('click', () => {
-            isConsoleDetached = !isConsoleDetached;
-            if (isConsoleDetached) {
-                consoleContainer.classList.add('detached');
-                detachConsoleBtn.textContent = 'Attach';
-            } else {
-                consoleContainer.classList.remove('detached');
-                detachConsoleBtn.textContent = 'Detach';
-            }
-        });
-
-        consoleTabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                consoleTabs.forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-
-                document.querySelectorAll('.console-content').forEach(content => {
-                    content.classList.remove('active');
-                });
-
-                document.getElementById(`${tab.dataset.tab}Tab`).classList.add('active');
+            themeToggle.addEventListener('click', () => {
+                html.classList.toggle('light');
+                localStorage.setItem('theme', html.classList.contains('light') ? 'light' : 'dark');
             });
-        });
 
-        function logToConsole(message, type = 'info') {
-            const logItem = document.createElement('div');
-            logItem.classList.add('log-item', type);
-            logItem.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-            consoleLog.appendChild(logItem);
-            consoleLog.scrollTop = consoleLog.scrollHeight;
-        }
-
-        function isValidUrl(string) {
-            try {
-                new URL(string);
-                return true;
-            } catch (_) {
-                return false;
+            if (localStorage.getItem('theme') === 'light') {
+                html.classList.add('light');
             }
-        }
+
+            document.getElementById('proxyForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const input = document.getElementById('urlInput').value.trim();
+                if (!input) return;
+
+                const isUrl = isValidUrl(input);
+                const searxInstance = 'https://searx.be';
+                const proxyUrl = `/api/proxy.js?q=${encodeURIComponent(input)}${!isUrl ? '&search=true' : ''}`;
+
+                proxyContainer.classList.remove('hidden');
+                proxyFrame.src = proxyUrl;
+
+                // Apply ad-blocking to the iframe if enabled
+                proxyFrame.onload = () => {
+                    const iframeDocument = proxyFrame.contentDocument || proxyFrame.contentWindow.document;
+                    if (iframeDocument && isAdBlockEnabled) {
+                        blockAds(); // Apply ad-blocking to the iframe content
+                    }
+                };
+
+                logToConsole(`Loading: ${input}`, 'info');
+            });
+
+            fullscreenBtn.addEventListener('click', () => {
+                proxyContainer.classList.add('fullscreen');
+                fullscreenBtn.classList.add('hidden');
+                minimizeBtn.classList.remove('hidden');
+                logToConsole('Entered fullscreen mode', 'info');
+            });
+
+            minimizeBtn.addEventListener('click', () => {
+                proxyContainer.classList.remove('fullscreen');
+                minimizeBtn.classList.add('hidden');
+                fullscreenBtn.classList.remove('hidden');
+                logToConsole('Exited fullscreen mode', 'info');
+            });
+
+            adBlockToggle.addEventListener('click', () => {
+                adBlockToggle.classList.toggle('toggle-on');
+                adBlockToggle.classList.toggle('toggle-off');
+                isAdBlockEnabled = adBlockToggle.classList.contains('toggle-on');
+
+                if (isAdBlockEnabled) {
+                    blockAds(); // Enable ad-blocking
+                    logToConsole('Ad Block enabled', 'info');
+                } else {
+                    unblockAds(); // Disable ad-blocking
+                    logToConsole('Ad Block disabled', 'info');
+                }
+            });
+
+            seeSourceToggle.addEventListener('click', () => {
+                seeSourceToggle.classList.toggle('toggle-on');
+                seeSourceToggle.classList.toggle('toggle-off');
+                isSeeSourceEnabled = seeSourceToggle.classList.contains('toggle-on');
+                consoleContainer.style.display = 'block';
+                consoleContainer.classList.add('visible');
+
+                if (isSeeSourceEnabled) {
+                    fetch(proxyFrame.src)
+                        .then(response => response.text())
+                        .then(data => {
+                            pageSource.textContent = data;
+                            logToConsole(`Fetched source for ${proxyFrame.src}`, 'info');
+                        })
+                        .catch(error => {
+                            logToConsole(`Failed to fetch source: ${error}`, 'error');
+                        });
+                } else {
+                    consoleContainer.classList.remove('visible');
+                    setTimeout(() => {
+                        consoleContainer.style.display = 'none';
+                    }, 300);
+                }
+            });
+
+            clearConsoleBtn.addEventListener('click', () => {
+                consoleLog.innerHTML = '';
+                logToConsole('Console cleared', 'info');
+            });
+
+            detachConsoleBtn.addEventListener('click', () => {
+                isConsoleDetached = !isConsoleDetached;
+                if (isConsoleDetached) {
+                    consoleContainer.classList.add('detached');
+                    detachConsoleBtn.textContent = 'Attach';
+                } else {
+                    consoleContainer.classList.remove('detached');
+                    detachConsoleBtn.textContent = 'Detach';
+                }
+            });
+
+            consoleTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    consoleTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    document.querySelectorAll('.console-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+
+                    document.getElementById(`${tab.dataset.tab}Tab`).classList.add('active');
+                });
+            });
+
+            function logToConsole(message, type = 'info') {
+                const logItem = document.createElement('div');
+                logItem.classList.add('log-item', type);
+                logItem.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+                consoleLog.appendChild(logItem);
+                consoleLog.scrollTop = consoleLog.scrollHeight;
+            }
+
+            function isValidUrl(string) {
+                try {
+                    new URL(string);
+                    return true;
+                } catch (_) {
+                    return false;
+                }
+            }
     </script>
 </body>
 </html>
