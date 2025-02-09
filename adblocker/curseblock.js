@@ -1576,3 +1576,15 @@ function blockAds() {
         subtree: true //Dear GOD that took fucking forever, I found a list of ad sites but I couldn't just copy and paste bc it wasn't js so I has to manually add '' and , to all of them.  Pain.
     });
 }
+
+function unblockAds() {
+    if (observer) {
+        observer.disconnect();
+        observer = null;
+        console.log('Ad Block disabled');
+    }
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { blockAds, unblockAds };
+}
