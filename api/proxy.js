@@ -1,14 +1,14 @@
+
 const axios = require('axios');
 const express = require('express');
-const app = express();
-const port = process.env.PORT || 3000;
+const router = express.Router();
 
-app.use((req, res, next) => {
+router.use((req, res, next) => {
     req.query = req.query || {};
     next();
 });
 
-app.get('/proxy', async (req, res) => {
+router.get('/proxy', async (req, res) => {
     const { q, search } = req.query;
 
     if (!q) {
@@ -19,7 +19,7 @@ app.get('/proxy', async (req, res) => {
         let targetUrl = q;
 
         if (search === 'true') {
-            const searxInstance = 'https://searx.be'; //luv u searx (im copying off AJH vault :p
+            const searxInstance = 'https://searx.be';
             targetUrl = `${searxInstance}/search?q=${encodeURIComponent(q)}`;
         }
 
@@ -34,7 +34,7 @@ app.get('/proxy', async (req, res) => {
         });
 
         res.setHeader('Content-Type', response.headers['content-type']);
-        res.setHeader('Cache-Control', 'public, max-age=3600'); // cache shtuff
+        res.setHeader('Cache-Control', 'public, max-age=3600');
         res.send(response.data);
     } catch (error) {
         console.error('Proxy error:', error.message);
@@ -42,9 +42,4 @@ app.get('/proxy', async (req, res) => {
     }
 });
 
-app.use(express.static('public'));
-
-// Start the server
-app.listen(port, () => {
-    console.log(`Proxy server running on http://localhost:${port}`);
-});
+module.exports = { router };
