@@ -1,7 +1,17 @@
 {
   "name": "curse-proxy",
-  "version": "1.7.6",
+  "version": "1.0.0",
+  "description": "A web proxy with a cyberpunk-themed frontend.",
+  "main": "proxy.js",
+  "scripts": {
+    "start": "node proxy.js",
+    "dev": "nodemon proxy.js"
+  },
   "dependencies": {
+    "express": "^4.18.2",
     "axios": "^1.6.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
   }
 }
