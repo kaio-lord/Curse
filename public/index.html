@@ -238,6 +238,11 @@
             z-index: 1000;
             transition: all 0.3s ease;
             display: none;
+            transform: translateY(100%);
+        }
+
+        .console-container.visible {
+            transform: translateY(0);
         }
 
         .light .console-container {
@@ -273,6 +278,32 @@
             color: black;
         }
 
+        .console-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .console-tab {
+            padding: 4px 8px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .console-tab.active {
+            background: var(--primary-glow);
+            color: black;
+        }
+
+        .console-content {
+            display: none;
+        }
+
+        .console-content.active {
+            display: block;
+        }
+
         .console-log {
             white-space: pre-wrap;
             word-wrap: break-word;
@@ -292,6 +323,12 @@
 
         .console-log .log-item.warn {
             color: #ffcc00;
+        }
+
+        .detached {
+            position: absolute;
+            resize: both;
+            overflow: auto;
         }
     </style>
 </head>
@@ -356,10 +393,21 @@
         <!-- Custom Console -->
         <div class="console-container" id="consoleContainer">
             <div class="console-header">
-                <span>Console</span>
-                <button id="clearConsoleBtn">Clear</button>
+                <div class="console-tabs">
+                    <div class="console-tab active" data-tab="logs">Logs</div>
+                    <div class="console-tab" data-tab="source">Page Source</div>
+                </div>
+                <div>
+                    <button id="detachConsoleBtn">Detach</button>
+                    <button id="clearConsoleBtn">Clear</button>
+                </div>
             </div>
-            <div class="console-log" id="consoleLog"></div>
+            <div class="console-content active" id="logsTab">
+                <div class="console-log" id="consoleLog"></div>
+            </div>
+            <div class="console-content" id="sourceTab">
+                <pre id="pageSource"></pre>
+            </div>
         </div>
 
         <!-- System Controls -->
@@ -392,11 +440,17 @@
         const consoleContainer = document.getElementById('consoleContainer');
         const consoleLog = document.getElementById('consoleLog');
         const clearConsoleBtn = document.getElementById('clearConsoleBtn');
+        const detachConsoleBtn = document.getElementById('detachConsoleBtn');
         const adBlockToggle = document.getElementById('adBlockToggle');
         const seeSourceToggle = document.getElementById('seeSourceToggle');
+        const logsTab = document.getElementById('logsTab');
+        const sourceTab = document.getElementById('sourceTab');
+        const pageSource = document.getElementById('pageSource');
+        const consoleTabs = document.querySelectorAll('.console-tab');
 
         let isAdBlockEnabled = false;
         let isSeeSourceEnabled = false;
+        let isConsoleDetached = false;
 
         // Theme Toggle
         themeToggle.addEventListener('click', () => {
@@ -421,7 +475,6 @@
             proxyContainer.classList.remove('hidden');
             proxyFrame.src = proxyUrl;
 
-            // Log the action
             logToConsole(`Loading: ${input}`, 'info');
         });
 
@@ -453,19 +506,24 @@
             seeSourceToggle.classList.toggle('toggle-on');
             seeSourceToggle.classList.toggle('toggle-off');
             isSeeSourceEnabled = seeSourceToggle.classList.contains('toggle-on');
-            consoleContainer.style.display = isSeeSourceEnabled ? 'block' : 'none';
-            logToConsole(`See Source ${isSeeSourceEnabled ? 'enabled' : 'disabled'}`, 'info');
+            consoleContainer.style.display = 'block';
+            consoleContainer.classList.add('visible');
 
             if (isSeeSourceEnabled) {
                 fetch(proxyFrame.src)
                     .then(response => response.text())
                     .then(data => {
-                        logToConsole(`Source code for ${proxyFrame.src}:`, 'info');
-                        logToConsole(data, 'info');
+                        pageSource.textContent = data;
+                        logToConsole(`Fetched source for ${proxyFrame.src}`, 'info');
                     })
                     .catch(error => {
                         logToConsole(`Failed to fetch source: ${error}`, 'error');
                     });
+            } else {
+                consoleContainer.classList.remove('visible');
+                setTimeout(() => {
+                    consoleContainer.style.display = 'none';
+                }, 300);
             }
         });
 
@@ -475,13 +533,39 @@
             logToConsole('Console cleared', 'info');
         });
 
+        // Detach Console
+        detachConsoleBtn.addEventListener('click', () => {
+            isConsoleDetached = !isConsoleDetached;
+            if (isConsoleDetached) {
+                consoleContainer.classList.add('detached');
+                detachConsoleBtn.textContent = 'Attach';
+            } else {
+                consoleContainer.classList.remove('detached');
+                detachConsoleBtn.textContent = 'Detach';
+            }
+        });
+
+        // Console Tabs
+        consoleTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                consoleTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                document.querySelectorAll('.console-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+
+                document.getElementById(`${tab.dataset.tab}Tab`).classList.add('active');
+            });
+        });
+
         // Log to Console
         function logToConsole(message, type = 'info') {
             const logItem = document.createElement('div');
             logItem.classList.add('log-item', type);
             logItem.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
             consoleLog.appendChild(logItem);
-            consoleLog.scrollTop = consoleLog.scrollHeight; // Auto-scroll
+            consoleLog.scrollTop = consoleLog.scrollHeight;
         }
 
         // URL Validation
