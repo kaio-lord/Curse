@@ -1,19 +1,21 @@
 const axios = require('axios');
 
 module.exports = async (req, res) => {
-    const { url, query } = req.query;
+    const { q, search } = req.query;
 
-    if (!url && !query) {
-        return res.status(400).json({ error: 'URL or search query is required' });
+    if (!q) {
+        return res.status(400).send('Missing query parameter');
     }
 
     try {
-        let targetUrl = url;
+        let targetUrl = q;
 
-        if (!url && query) {
-            const searxInstance = 'https://searx.be'; 
-            targetUrl = `${searxInstance}/search?q=${encodeURIComponent(query)}`;
+        if (search === 'true') {
+            const searxInstance = 'https://searx.be';
+            targetUrl = `${searxInstance}/search?q=${encodeURIComponent(q)}`;
         }
+
+        // Fetch the content from the target URL
         const response = await axios.get(targetUrl, {
             responseType: 'arraybuffer',
             headers: {
@@ -23,9 +25,9 @@ module.exports = async (req, res) => {
 
         // Set appropriate headers and send the response
         res.setHeader('Content-Type', response.headers['content-type']);
-        res.setHeader('Access-Control-Allow-Origin', '*');
         res.send(response.data);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch the URL or perform the search' });
+        console.error('Proxy error:', error.message);
+        res.status(500).send('Error fetching resource');
     }
 };
