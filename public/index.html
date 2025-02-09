@@ -240,6 +240,7 @@
             display: none;
             transform: translateY(100%);
         }
+
         .console-container.visible {
             transform: translateY(0);
         }
@@ -282,22 +283,27 @@
             gap: 8px;
             margin-bottom: 1rem;
         }
+
         .console-tab {
             padding: 4px 8px;
             cursor: pointer;
             border-radius: 4px;
             transition: all 0.3s ease;
         }
+
         .console-tab.active {
             background: var(--primary-glow);
             color: black;
         }
+
         .console-content {
             display: none;
         }
+
         .console-content.active {
             display: block;
         }
+
         .console-log {
             white-space: pre-wrap;
             word-wrap: break-word;
@@ -318,6 +324,7 @@
         .console-log .log-item.warn {
             color: #ffcc00;
         }
+
         .detached {
             position: absolute;
             resize: both;
@@ -386,8 +393,6 @@
         <!-- Custom Console -->
         <div class="console-container" id="consoleContainer">
             <div class="console-header">
-                <span>Console</span>
-                <button id="clearConsoleBtn">Clear</button>
                 <div class="console-tabs">
                     <div class="console-tab active" data-tab="logs">Logs</div>
                     <div class="console-tab" data-tab="source">Page Source</div>
@@ -403,7 +408,6 @@
             <div class="console-content" id="sourceTab">
                 <pre id="pageSource"></pre>
             </div>
-            <div class="console-log" id="consoleLog"></div>
         </div>
 
         <!-- System Controls -->
@@ -471,7 +475,6 @@
             proxyContainer.classList.remove('hidden');
             proxyFrame.src = proxyUrl;
 
-            // Log the action
             logToConsole(`Loading: ${input}`, 'info');
         });
 
@@ -503,8 +506,6 @@
             seeSourceToggle.classList.toggle('toggle-on');
             seeSourceToggle.classList.toggle('toggle-off');
             isSeeSourceEnabled = seeSourceToggle.classList.contains('toggle-on');
-            consoleContainer.style.display = isSeeSourceEnabled ? 'block' : 'none';
-            logToConsole(`See Source ${isSeeSourceEnabled ? 'enabled' : 'disabled'}`, 'info');
             consoleContainer.style.display = 'block';
             consoleContainer.classList.add('visible');
 
@@ -512,8 +513,6 @@
                 fetch(proxyFrame.src)
                     .then(response => response.text())
                     .then(data => {
-                        logToConsole(`Source code for ${proxyFrame.src}:`, 'info');
-                        logToConsole(data, 'info');
                         pageSource.textContent = data;
                         logToConsole(`Fetched source for ${proxyFrame.src}`, 'info');
                     })
@@ -545,24 +544,27 @@
                 detachConsoleBtn.textContent = 'Detach';
             }
         });
+
         // Console Tabs
         consoleTabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 consoleTabs.forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
+
                 document.querySelectorAll('.console-content').forEach(content => {
                     content.classList.remove('active');
                 });
+
                 document.getElementById(`${tab.dataset.tab}Tab`).classList.add('active');
             });
         });
+
         // Log to Console
         function logToConsole(message, type = 'info') {
             const logItem = document.createElement('div');
             logItem.classList.add('log-item', type);
             logItem.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
             consoleLog.appendChild(logItem);
-            consoleLog.scrollTop = consoleLog.scrollHeight; // Auto-scroll
             consoleLog.scrollTop = consoleLog.scrollHeight;
         }
 
