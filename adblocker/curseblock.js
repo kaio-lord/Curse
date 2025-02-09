@@ -1588,3 +1588,11 @@ function unblockAds() {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { blockAds, unblockAds };
 }
+
+function blockAds() {
+    console.log('Curse Block: Blocking ads...');
+}
+
+function unblockAds() {
+    console.log('Curse Block: Disabling ad-blocking...');
+}
