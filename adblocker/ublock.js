@@ -58,3 +58,11 @@ loadFilterLists();
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { blockAds, unblockAds, loadFilterLists };
 }
+
+function blockAds() {
+    console.log('uBlock: Blocking ads...');
+}
+
+function unblockAds() {
+    console.log('uBlock: Disabling ad-blocking...');
+}
