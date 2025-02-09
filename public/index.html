@@ -169,9 +169,130 @@
         .toggle-off .circle {
             left: 2px;
         }
-        #bar{position:fixed;bottom:20px;left:10%;right:10%;background:#2d2f38;text-align:center;border:3px solid #01579b;box-shadow:0 4px 20px rgba(0,0,0,0.4);border-radius:10px;} 
-        #bar nav a{color:white;padding:8px 12px;text-decoration:none;display:inline-block;}
-        #bar nav a:hover{background:#2d2f38;}
+
+        .proxy-container {
+            position: relative;
+            margin-top: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            height: 600px;
+        }
+
+        .proxy-container.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 100vh;
+            z-index: 1000;
+            background: #0a0a0a;
+        }
+
+        #proxyFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        .proxy-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1001;
+            display: flex;
+            gap: 8px;
+        }
+
+        .control-btn {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary-glow);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: var(--primary-glow);
+            color: black;
+        }
+
+        .console-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 300px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            font-family: monospace;
+            padding: 1rem;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            display: none;
+        }
+
+        .light .console-container {
+            background: rgba(255, 255, 255, 0.8);
+            color: black;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .console-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .console-header button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--primary-glow);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .light .console-header button {
+            background: rgba(0, 0, 0, 0.1);
+            color: black;
+        }
+
+        .console-header button:hover {
+            background: var(--primary-glow);
+            color: black;
+        }
+
+        .console-log {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .console-log .log-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .console-log .log-item.error {
+            color: #ff4444;
+        }
+
+        .console-log .log-item.info {
+            color: #44ff44;
+        }
+
+        .console-log .log-item.warn {
+            color: #ffcc00;
+        }
     </style>
 </head>
 <body>
@@ -203,77 +324,51 @@
         </header>
 
         <div class="max-w-2xl mx-auto cyber-card rounded-lg p-6 mb-8">
-             <form id="proxyForm" class="space-y-4" action="/api/proxy" method="GET">
-                 <div class="relative">
-                     <input 
-            type="url" 
-            id="urlInput" 
-            name="url"
-            placeholder="Enter URL to dive in..."
-            class="cyber-input w-full px-4 py-3 rounded-lg outline-none text-white placeholder-gray-400"
-        >
-                     <input 
-            type="text" 
-            id="searchInput" 
-            name="query"
-            placeholder="Or enter a search query..."
-            class="cyber-input w-full px-4 py-3 rounded-lg outline-none text-white placeholder-gray-400 mt-2"
-        >
-                     <button 
-            type="submit"
-            class="absolute right-2 top-2 cyber-button px-4 py-1 rounded-lg text-white"
-        >
-            Go
-        </button>
-    </div>
-</form>
+            <form id="proxyForm" class="space-y-4">
+                <div class="relative">
+                    <input 
+                        type="text" 
+                        id="urlInput" 
+                        name="q"
+                        placeholder="Enter URL or search query..."
+                        class="cyber-input w-full px-4 py-3 rounded-lg outline-none text-white placeholder-gray-400"
+                        required
+                    >
+                    <button 
+                        type="submit"
+                        class="absolute right-2 top-2 cyber-button px-4 py-1 rounded-lg text-white"
+                    >
+                        Go
+                    </button>
+                </div>
+            </form>
         </div>
 
-        <div class="grid md:grid-cols-3 gap-6 mb-8">
-            <div class="cyber-card p-6 rounded-lg">
-                <div class="text-blue-400 mb-4">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                    </svg>
-                </div>
-                <h3 class="text-xl font-semibold mb-2 text-white">Encrypted Connection</h3>
-                <p class="text-gray-300">Secure Proxy Tunnel To Your Destination</p>
+        <!-- Proxy Container -->
+        <div class="proxy-container hidden" id="proxyContainer">
+            <div class="proxy-controls">
+                <button class="control-btn" id="fullscreenBtn">⤢</button>
+                <button class="control-btn hidden" id="minimizeBtn">⤡</button>
             </div>
-
-            <div class="cyber-card p-6 rounded-lg">
-                <div class="text-blue-400 mb-4">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                </div>
-                <h3 class="text-xl font-semibold mb-2 text-white">Be The Ghost</h3>
-                <p class="text-gray-300">Become Anonymous Online</p>
-            </div>
-
-            <div class="cyber-card p-6 rounded-lg">
-                <div class="text-blue-400 mb-4">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                    </svg>
-                </div>
-                <h3 class="text-xl font-semibold mb-2 text-white">Cursed Speed</h3>
-                <p class="text-gray-300">Speeds Faster Than Any Other</p>
-            </div>
+            <iframe id="proxyFrame"></iframe>
         </div>
 
+        <!-- Custom Console -->
+        <div class="console-container" id="consoleContainer">
+            <div class="console-header">
+                <span>Console</span>
+                <button id="clearConsoleBtn">Clear</button>
+            </div>
+            <div class="console-log" id="consoleLog"></div>
+        </div>
+
+        <!-- System Controls -->
         <div class="max-w-2xl mx-auto cyber-card rounded-lg p-6">
             <h2 class="text-2xl font-semibold mb-4 text-white">System Controls</h2>
             <div class="space-y-4">
                 <div class="flex items-center justify-between">
-                    <span class="text-gray-300">Custom Console</span>
-                    <label class="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" class="sr-only peer" checked>
-                        <div class="w-11 h-6 bg-gray-700 peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                    </label>
-                </div>
-                <div class="flex items-center justify-between">
-                    <span class="text-gray-300">Ad Removal</span>
-                    <div id="adRemovalToggle" class="toggle toggle-off">
+                    <span class="text-gray-300">Ad Block</span>
+                    <div id="adBlockToggle" class="toggle toggle-off">
                         <div class="circle"></div>
                     </div>
                 </div>
@@ -286,20 +381,24 @@
             </div>
         </div>
     </div>
-     <div id="bar">
-        <nav>
-          <a href="/index.html">Home</a> | 
-          <a href="./Curse/f.html">Game</a> | 
-          <a href="#">Random</a> | 
-          <a href="#">About</a> | 
-          <a href="#">Host</a>
-        </nav>
-      </div> <!--sigma navbar -->
 
     <script>
         const html = document.documentElement;
         const themeToggle = document.getElementById('themeToggle');
+        const proxyContainer = document.getElementById('proxyContainer');
+        const proxyFrame = document.getElementById('proxyFrame');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const minimizeBtn = document.getElementById('minimizeBtn');
+        const consoleContainer = document.getElementById('consoleContainer');
+        const consoleLog = document.getElementById('consoleLog');
+        const clearConsoleBtn = document.getElementById('clearConsoleBtn');
+        const adBlockToggle = document.getElementById('adBlockToggle');
+        const seeSourceToggle = document.getElementById('seeSourceToggle');
 
+        let isAdBlockEnabled = false;
+        let isSeeSourceEnabled = false;
+
+        // Theme Toggle
         themeToggle.addEventListener('click', () => {
             html.classList.toggle('light');
             localStorage.setItem('theme', html.classList.contains('light') ? 'light' : 'dark');
@@ -309,25 +408,91 @@
             html.classList.add('light');
         }
 
-        document.getElementById('proxyForm').addEventListener('submit', function(e) {
+        // Proxy Form Handling
+        document.getElementById('proxyForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const url = document.getElementById('urlInput').value;
-            console.log('Proxying:', url);
+            const input = document.getElementById('urlInput').value.trim();
+            if (!input) return;
+
+            const isUrl = isValidUrl(input);
+            const searxInstance = 'https://searx.be';
+            const proxyUrl = `/api/proxy?q=${encodeURIComponent(input)}${!isUrl ? '&search=true' : ''}`;
+
+            proxyContainer.classList.remove('hidden');
+            proxyFrame.src = proxyUrl;
+
+            // Log the action
+            logToConsole(`Loading: ${input}`, 'info');
         });
 
-        const adRemovalToggle = document.getElementById('adRemovalToggle');
-        adRemovalToggle.addEventListener('click', () => {
-            adRemovalToggle.classList.toggle('toggle-on');
-            adRemovalToggle.classList.toggle('toggle-off');
-            console.log(adRemovalToggle.classList.contains('toggle-on') ? 'Ad blocking enabled' : 'Ad blocking disabled');
+        // Fullscreen Controls
+        fullscreenBtn.addEventListener('click', () => {
+            proxyContainer.classList.add('fullscreen');
+            fullscreenBtn.classList.add('hidden');
+            minimizeBtn.classList.remove('hidden');
+            logToConsole('Entered fullscreen mode', 'info');
         });
 
-        const seeSourceToggle = document.getElementById('seeSourceToggle');
+        minimizeBtn.addEventListener('click', () => {
+            proxyContainer.classList.remove('fullscreen');
+            minimizeBtn.classList.add('hidden');
+            fullscreenBtn.classList.remove('hidden');
+            logToConsole('Exited fullscreen mode', 'info');
+        });
+
+        // Ad Block Toggle
+        adBlockToggle.addEventListener('click', () => {
+            adBlockToggle.classList.toggle('toggle-on');
+            adBlockToggle.classList.toggle('toggle-off');
+            isAdBlockEnabled = adBlockToggle.classList.contains('toggle-on');
+            logToConsole(`Ad Block ${isAdBlockEnabled ? 'enabled' : 'disabled'}`, 'info');
+        });
+
+        // See Source Toggle
         seeSourceToggle.addEventListener('click', () => {
             seeSourceToggle.classList.toggle('toggle-on');
             seeSourceToggle.classList.toggle('toggle-off');
-            console.log(seeSourceToggle.classList.contains('toggle-on') ? 'Inspect Element is visible' : 'Inspect Element is hidden');
+            isSeeSourceEnabled = seeSourceToggle.classList.contains('toggle-on');
+            consoleContainer.style.display = isSeeSourceEnabled ? 'block' : 'none';
+            logToConsole(`See Source ${isSeeSourceEnabled ? 'enabled' : 'disabled'}`, 'info');
+
+            if (isSeeSourceEnabled) {
+                fetch(proxyFrame.src)
+                    .then(response => response.text())
+                    .then(data => {
+                        logToConsole(`Source code for ${proxyFrame.src}:`, 'info');
+                        logToConsole(data, 'info');
+                    })
+                    .catch(error => {
+                        logToConsole(`Failed to fetch source: ${error}`, 'error');
+                    });
+            }
         });
+
+        // Clear Console
+        clearConsoleBtn.addEventListener('click', () => {
+            consoleLog.innerHTML = '';
+            logToConsole('Console cleared', 'info');
+        });
+
+        // Log to Console
+        function logToConsole(message, type = 'info') {
+            const logItem = document.createElement('div');
+            logItem.classList.add('log-item', type);
+            logItem.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            consoleLog.appendChild(logItem);
+            consoleLog.scrollTop = consoleLog.scrollHeight; // Auto-scroll
+        }
+
+        // URL Validation
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
     </script>
 </body>
 </html>
