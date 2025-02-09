@@ -7,7 +7,7 @@ Surf The Cursed Web Anonymous
 [![Deploy to Heroku](https://binbashbanana.github.io/deploy-buttons/buttons/remade/heroku.svg)](https://heroku.com/deploy/?template=https://github.com/Genera1Developer/Curse)
 [![Run on Replit](https://binbashbanana.github.io/deploy-buttons/buttons/remade/replit.svg)](https://replit.com/github/Genera1Developer/Curse)
 [![Remix on Glitch](https://binbashbanana.github.io/deploy-buttons/buttons/remade/glitch.svg)](https://glitch.com/edit/#!/import/github/Genera1Developer/Curse)
-[![Deploy to Azure](https://binbashbanana.github.io/deploy-buttons/buttons/remade/azure.svg)](??? / https://deploy.azure.com/?repository=https://github.com/Genera1Developer/Curse)
+[![Deploy to Azure](https://binbashbanana.github.io/deploy-buttons/buttons/remade/azure.svg)](https://deploy.azure.com/?repository=https://github.com/Genera1Developer/Curse)
 [![Deploy to IBM Cloud](https://binbashbanana.github.io/deploy-buttons/buttons/remade/ibmcloud.svg)](https://cloud.ibm.com/devops/setup/deploy?repository=https://github.com/Genera1Developer/Curse)
 [![Deploy to Amplify Console](https://binbashbanana.github.io/deploy-buttons/buttons/remade/amplifyconsole.svg)](https://console.aws.amazon.com/amplify/home#/deploy?repo=https://github.com/Genera1Developer/Curse)
 [![Run on Google Cloud](https://binbashbanana.github.io/deploy-buttons/buttons/remade/googlecloud.svg)](https://deploy.cloud.run/?git_repo=https://github.com/Genera1Developer/Curse)
