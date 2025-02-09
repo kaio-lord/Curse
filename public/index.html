@@ -409,25 +409,32 @@
         </div>
 
         <div class="max-w-2xl mx-auto cyber-card rounded-lg p-6">
-            <h2 class="text-2xl font-semibold mb-4 text-white">System Controls</h2>
-            <div class="space-y-4">
-                <div class="flex items-center justify-between">
-                    <span class="text-gray-300">Ad Block</span>
-                    <div id="adBlockToggle" class="toggle toggle-off">
-                        <div class="circle"></div>
-                    </div>
-                </div>
-                <div class="flex items-center justify-between">
-                    <span class="text-gray-300">See Source</span>
-                    <div id="seeSourceToggle" class="toggle toggle-off">
-                        <div class="circle"></div>
-                    </div>
-                </div>
+    <h2 class="text-2xl font-semibold mb-4 text-white">System Controls</h2>
+    <div class="space-y-4">
+        <div class="flex items-center justify-between">
+            <span class="text-gray-300">Ad Block</span>
+            <div id="adBlockToggle" class="toggle toggle-off">
+                <div class="circle"></div>
+            </div>
+        </div>
+        <div class="flex items-center justify-between">
+            <span class="text-gray-300">Ad Block Method</span>
+            <select id="adBlockMethod" class="cyber-input px-4 py-2 rounded-lg">
+                <option value="curse">Curse Block</option>
+                <option value="ublock">uBlock</option>
+            </select>
+        </div>
+        <div class="flex items-center justify-between">
+            <span class="text-gray-300">See Source</span>
+            <div id="seeSourceToggle" class="toggle toggle-off">
+                <div class="circle"></div>
             </div>
         </div>
     </div>
+</div>
     
     <script src="/adblocker/curseblock.js"></script>
+    <script src="/adblocker/ublock.js"></script>
     <script>
             const html = document.documentElement;
             const themeToggle = document.getElementById('themeToggle');
@@ -471,11 +478,10 @@
                 proxyContainer.classList.remove('hidden');
                 proxyFrame.src = proxyUrl;
 
-                // Apply ad-blocking to the iframe if enabled
                 proxyFrame.onload = () => {
                     const iframeDocument = proxyFrame.contentDocument || proxyFrame.contentWindow.document;
                     if (iframeDocument && isAdBlockEnabled) {
-                        blockAds(); // Apply ad-blocking to the iframe content
+                        blockAds(); 
                     }
                 };
 
@@ -502,10 +508,10 @@
                 isAdBlockEnabled = adBlockToggle.classList.contains('toggle-on');
 
                 if (isAdBlockEnabled) {
-                    blockAds(); // Enable ad-blocking
+                    blockAds(); 
                     logToConsole('Ad Block enabled', 'info');
                 } else {
-                    unblockAds(); // Disable ad-blocking
+                    unblockAds(); 
                     logToConsole('Ad Block disabled', 'info');
                 }
             });
