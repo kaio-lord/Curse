@@ -7,7 +7,7 @@ Surf The Cursed Web Anonymous
 [Deploy to Heroku](https://heroku.com/deploy/?template=https://github.com/Genera1Developer/Curse)  
 [Deploy to Replit](https://replit.com/github/Genera1Developer/Curse)  
 [Deploy to Glitch](https://glitch.com/edit/#!/import/github/Genera1Developer/Curse)  
-[Deploy to Azure](??? / https://deploy.azure.com/?repository=https://github.com/Genera1Developer/Curse)  
+[Deploy to Azure](https://deploy.azure.com/?repository=https://github.com/Genera1Developer/Curse)  
 [Deploy to IBM Cloud](https://cloud.ibm.com/devops/setup/deploy?repository=https://github.com/Genera1Developer/Curse)  
 [Deploy to AWS Amplify Console](https://console.aws.amazon.com/amplify/home#/deploy?repo=https://github.com/Genera1Developer/Curse)  
 [Deploy to Google Cloud](https://deploy.cloud.run/?git_repo=https://github.com/Genera1Developer/Curse)  
