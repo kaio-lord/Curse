@@ -1,18 +1,24 @@
-
 const axios = require('axios');
 const express = require('express');
-const router = express.Router();
+const app = express();
+const port = process.env.PORT || 3000;
 
-router.use((req, res, next) => {
+app.use((req, res, next) => {
     req.query = req.query || {};
     next();
 });
 
-router.get('/proxy', async (req, res) => {
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+});
+
+app.get('/api/proxy.js', async (req, res) => {
     const { q, search } = req.query;
 
     if (!q) {
-        return res.status(400).send('Missing query parameter: q');
+        return res.status(400).json({ error: 'Missing query parameter: q' });
     }
 
     try {
@@ -38,8 +44,12 @@ router.get('/proxy', async (req, res) => {
         res.send(response.data);
     } catch (error) {
         console.error('Proxy error:', error.message);
-        res.status(500).send('Error fetching resource');
+        res.status(500).json({ error: 'Error fetching resource', details: error.message });
     }
 });
 
-module.exports = { router };
+app.use(express.static('public'));
+
+app.listen(port, () => {
+    console.log(`Proxy server running on http://localhost:${port}`);
+});
