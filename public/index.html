@@ -203,24 +203,30 @@
         </header>
 
         <div class="max-w-2xl mx-auto cyber-card rounded-lg p-6 mb-8">
-            <form id="proxyForm" class="space-y-4" action="/api/proxy" method="GET">
-                <div class="relative">
-                    <input 
-                        type="url" 
-                        id="urlInput" 
-                        name="url"
-                        placeholder="Enter URL to dive in..."
-                        class="cyber-input w-full px-4 py-3 rounded-lg outline-none text-white placeholder-gray-400"
-                        required
-                        >
-                    <button 
-                        type="submit"
-                        class="absolute right-2 top-2 cyber-button px-4 py-1 rounded-lg text-white"
-                        >
-                        Go
-                    </button>
-                </div>
-            </form>
+             <form id="proxyForm" class="space-y-4" action="/api/proxy" method="GET">
+                 <div class="relative">
+                     <input 
+            type="url" 
+            id="urlInput" 
+            name="url"
+            placeholder="Enter URL to dive in..."
+            class="cyber-input w-full px-4 py-3 rounded-lg outline-none text-white placeholder-gray-400"
+        >
+                     <input 
+            type="text" 
+            id="searchInput" 
+            name="query"
+            placeholder="Or enter a search query..."
+            class="cyber-input w-full px-4 py-3 rounded-lg outline-none text-white placeholder-gray-400 mt-2"
+        >
+                     <button 
+            type="submit"
+            class="absolute right-2 top-2 cyber-button px-4 py-1 rounded-lg text-white"
+        >
+            Go
+        </button>
+    </div>
+</form>
         </div>
 
         <div class="grid md:grid-cols-3 gap-6 mb-8">
