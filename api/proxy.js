@@ -22,10 +22,10 @@ app.get('/api/proxy.js', async (req, res) => {
     }
 
     try {
-        let targetUrl = `https://www.google.com/webhp?igu=1&q=${encodeURIComponent(q)}`;
+        let targetUrl = `https://www.google.com/webhp?igu=1&q=${encodeURIComponent(q)}`; 
 
         if (search === 'true') {
-            targetUrl = `https://www.google.com/search?q=${encodeURIComponent(q)}`;
+            targetUrl = `https://www.google.com/webhp?igu=1&q=${encodeURIComponent(q)}`;
         }
 
         const response = await axios.get(targetUrl, {
