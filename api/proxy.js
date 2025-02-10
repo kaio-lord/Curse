@@ -22,10 +22,11 @@ app.get('/api/proxy.js', async (req, res) => {
     }
 
     try {
-        let targetUrl = `https://www.google.com/search?q=${encodeURIComponent(q)}`;
+        let targetUrl = q;
 
         if (search === 'true') {
-            targetUrl = `https://www.google.com/search?q=${encodeURIComponent(q)}`;
+            const searxInstance = 'https://searx.be';
+            targetUrl = ${searxInstance}/search?q=${encodeURIComponent(q)};
         }
 
         const response = await axios.get(targetUrl, {
@@ -50,5 +51,5 @@ app.get('/api/proxy.js', async (req, res) => {
 app.use(express.static('public'));
 
 app.listen(port, () => {
-    console.log(`Proxy server running on http://localhost:${port}`);
+    console.log(Proxy server running on http://localhost:${port});
 });
