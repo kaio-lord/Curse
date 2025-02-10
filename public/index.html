@@ -30,7 +30,6 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
             </svg>
         </button>
-
         <button 
             id="themeSelector" 
             class="fixed top-16 right-4 cyber-button p-2 rounded-full text-white"
@@ -44,9 +43,9 @@
                 <div class="theme-preview" style="background: linear-gradient(135deg, #1e3a8a, #1e40af);"></div>
                 Default
             </div>
-            <div class="theme-item" data-theme="cyberpunk">
+            <div class="theme-item" data-theme="particles">
                 <div class="theme-preview" style="background: linear-gradient(135deg, #ff00ff, #00ffff);"></div>
-                Cyberpunk
+                Particles
             </div>
             <div class="theme-item" data-theme="forest">
                 <div class="theme-preview" style="background: linear-gradient(135deg, #2d7a4d, #4caf50);"></div>
@@ -64,7 +63,6 @@
             </h1>
             <p class="text-gray-300">Evade With Anonimity</p>
         </header>
-
         <div class="max-w-2xl mx-auto cyber-card rounded-lg p-6 mb-8">
             <form id="proxyForm" class="space-y-4">
                 <div class="relative">
@@ -112,6 +110,7 @@
                 <pre id="pageSource"></pre>
             </div>
         </div>
+
         <div class="max-w-2xl mx-auto cyber-card rounded-lg p-6">
             <h2 class="text-2xl font-semibold mb-4 text-white">System Controls</h2>
             <div class="space-y-4">
@@ -137,6 +136,7 @@
             </div>
         </div>
     </div>
+
     <script src="/adblocker/curseblock.js"></script>
     <script src="/adblocker/ublock.js"></script>
     <script src="/themes/particles.js"></script>
@@ -145,6 +145,26 @@
         const themeToggle = document.getElementById('themeToggle');
         const themeSelector = document.getElementById('themeSelector');
         const themeDropdown = document.getElementById('themeDropdown');
+        const proxyContainer = document.getElementById('proxyContainer');
+        const proxyFrame = document.getElementById('proxyFrame');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const minimizeBtn = document.getElementById('minimizeBtn');
+        const consoleContainer = document.getElementById('consoleContainer');
+        const consoleLog = document.getElementById('consoleLog');
+        const clearConsoleBtn = document.getElementById('clearConsoleBtn');
+        const detachConsoleBtn = document.getElementById('detachConsoleBtn');
+        const adBlockToggle = document.getElementById('adBlockToggle');
+        const adBlockMethod = document.getElementById('adBlockMethod');
+        const seeSourceToggle = document.getElementById('seeSourceToggle');
+        const logsTab = document.getElementById('logsTab');
+        const sourceTab = document.getElementById('sourceTab');
+        const pageSource = document.getElementById('pageSource');
+        const consoleTabs = document.querySelectorAll('.console-tab');
+
+        let isAdBlockEnabled = false;
+        let isSeeSourceEnabled = false;
+        let isConsoleDetached = false;
+        let currentAdBlockMethod = 'curse';
 
         themeToggle.addEventListener('click', () => {
             html.classList.toggle('light');
@@ -170,6 +190,151 @@
 
         const savedTheme = localStorage.getItem('theme') || 'default';
         html.setAttribute('data-theme', savedTheme);
+
+        document.getElementById('proxyForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const input = document.getElementById('urlInput').value.trim();
+            if (!input) return;
+
+            const isUrl = isValidUrl(input);
+            const searxInstance = 'https://searx.be';
+            const proxyUrl = `/api/proxy.js?q=${encodeURIComponent(input)}${!isUrl ? '&search=true' : ''}`;
+
+            proxyContainer.classList.remove('hidden');
+            proxyFrame.src = proxyUrl;
+
+            proxyFrame.onload = () => {
+                const iframeDocument = proxyFrame.contentDocument || proxyFrame.contentWindow.document;
+                if (iframeDocument && isAdBlockEnabled) {
+                    loadAdBlockMethod();
+                }
+            };
+
+            logToConsole(`Loading: ${input}`, 'info');
+        });
+
+        fullscreenBtn.addEventListener('click', () => {
+            proxyContainer.classList.add('fullscreen');
+            fullscreenBtn.classList.add('hidden');
+            minimizeBtn.classList.remove('hidden');
+            logToConsole('Entered fullscreen mode', 'info');
+        });
+
+        minimizeBtn.addEventListener('click', () => {
+            proxyContainer.classList.remove('fullscreen');
+            minimizeBtn.classList.add('hidden');
+            fullscreenBtn.classList.remove('hidden');
+            logToConsole('Exited fullscreen mode', 'info');
+        });
+
+        seeSourceToggle.addEventListener('click', () => {
+            seeSourceToggle.classList.toggle('toggle-on');
+            seeSourceToggle.classList.toggle('toggle-off');
+            isSeeSourceEnabled = seeSourceToggle.classList.contains('toggle-on');
+            consoleContainer.style.display = 'block';
+            consoleContainer.classList.add('visible');
+
+            if (isSeeSourceEnabled) {
+                fetch(proxyFrame.src)
+                    .then(response => response.text())
+                    .then(data => {
+                        pageSource.textContent = data;
+                        logToConsole(`Fetched source for ${proxyFrame.src}`, 'info');
+                    })
+                    .catch(error => {
+                        logToConsole(`Failed to fetch source: ${error}`, 'error');
+                    });
+            } else {
+                consoleContainer.classList.remove('visible');
+                setTimeout(() => {
+                    consoleContainer.style.display = 'none';
+                }, 300);
+            }
+        });
+
+        clearConsoleBtn.addEventListener('click', () => {
+            consoleLog.innerHTML = '';
+            logToConsole('Console cleared', 'info');
+        });
+
+        detachConsoleBtn.addEventListener('click', () => {
+            isConsoleDetached = !isConsoleDetached;
+            if (isConsoleDetached) {
+                consoleContainer.classList.add('detached');
+                detachConsoleBtn.textContent = 'Attach';
+            } else {
+                consoleContainer.classList.remove('detached');
+                detachConsoleBtn.textContent = 'Detach';
+            }
+        });
+
+        consoleTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                consoleTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+
+                document.querySelectorAll('.console-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+
+                document.getElementById(`${tab.dataset.tab}Tab`).classList.add('active');
+            });
+        });
+        adBlockToggle.addEventListener('click', () => {
+            adBlockToggle.classList.toggle('toggle-on');
+            adBlockToggle.classList.toggle('toggle-off');
+            isAdBlockEnabled = adBlockToggle.classList.contains('toggle-on');
+
+            if (isAdBlockEnabled) {
+                loadAdBlockMethod();
+                logToConsole(`Ad Block enabled (${currentAdBlockMethod})`, 'info');
+            } else {
+                if (currentAdBlockMethod === 'curse') {
+                    unblockAds();
+                } else if (currentAdBlockMethod === 'ublock') {
+                    unblockAds();
+                }
+                logToConsole('Ad Block disabled', 'info');
+            }
+        });
+
+        adBlockMethod.addEventListener('change', () => {
+            currentAdBlockMethod = adBlockMethod.value;
+            logToConsole(`Switched to ${currentAdBlockMethod}`, 'info');
+
+            if (isAdBlockEnabled) {
+                loadAdBlockMethod();
+            }
+        });
+
+        function logToConsole(message, type = 'info') {
+            const logItem = document.createElement('div');
+            logItem.classList.add('log-item', type);
+            logItem.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            consoleLog.appendChild(logItem);
+            consoleLog.scrollTop = consoleLog.scrollHeight;
+        }
+
+        function isValidUrl(string) {
+            try {
+                new URL(string);
+                return true;
+            } catch (_) {
+                return false;
+            }
+        }
+
+        function loadAdBlockMethod() {
+            if (currentAdBlockMethod === 'curse') {
+                if (typeof unblockAds === 'function') unblockAds();
+                blockAds();
+                logToConsole('Curse Block enabled', 'info');
+            } else if (currentAdBlockMethod === 'ublock') {
+                if (typeof unblockAds === 'function') unblockAds();
+                blockAds();
+                logToConsole('uBlock enabled', 'info');
+            }
+        }
     </script>
 </body>
 </html>
