@@ -25,8 +25,8 @@ app.get('/api/proxy.js', async (req, res) => {
         let targetUrl = q;
 
         if (search === 'true') {
-            const searxInstance = 'https://google.com';
-            targetUrl = `${searxInstance}/search?q=${encodeURIComponent(q)}`;
+            const searxInstance = 'https://duckduckgo.com';
+            targetUrl = `${searxInstance}/?t=h_&q=${encodeURIComponent(q)}`;
         }
 
         const response = await axios.get(targetUrl, {
