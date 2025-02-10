@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> <!--had to recode all this shit in replit bc my github broke and deleted my shit for me -->
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
@@ -18,11 +18,7 @@
     </div>
 
     <div class="container mx-auto px-4 py-8 relative">
-        <button 
-            id="themeToggle" 
-            class="fixed top-4 right-4 cyber-button p-2 rounded-full text-white"
-            aria-label="Toggle light mode"
-        >
+        <button id="themeToggle" class="fixed top-4 right-4 cyber-button p-2 rounded-full text-white">
             <svg class="w-6 h-6 theme-icon-light" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
             </svg>
@@ -30,11 +26,8 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
             </svg>
         </button>
-        <button 
-            id="themeSelector" 
-            class="fixed top-16 right-4 cyber-button p-2 rounded-full text-white"
-            aria-label="Select theme"
-        >
+
+        <button id="themeSelector" class="fixed top-16 right-4 cyber-button p-2 rounded-full text-white">
             🎨
         </button>
 
@@ -63,23 +56,12 @@
             </h1>
             <p class="text-gray-300">Evade With Anonimity</p>
         </header>
+
         <div class="max-w-2xl mx-auto cyber-card rounded-lg p-6 mb-8">
             <form id="proxyForm" class="space-y-4">
                 <div class="relative">
-                    <input 
-                        type="text" 
-                        id="urlInput" 
-                        name="q"
-                        placeholder="Enter URL or search query..."
-                        class="cyber-input w-full px-4 py-3 rounded-lg outline-none text-white placeholder-gray-400"
-                        required
-                    >
-                    <button 
-                        type="submit"
-                        class="absolute right-2 top-2 cyber-button px-4 py-1 rounded-lg text-white"
-                    >
-                        Go
-                    </button>
+                    <input type="text" id="urlInput" name="q" placeholder="Enter URL or search query..." class="cyber-input w-full px-4 py-3 rounded-lg outline-none text-white placeholder-gray-400" required>
+                    <button type="submit" class="absolute right-2 top-2 cyber-button px-4 py-1 rounded-lg text-white">Go</button>
                 </div>
             </form>
         </div>
@@ -182,14 +164,33 @@
         document.querySelectorAll('.theme-item').forEach(item => {
             item.addEventListener('click', () => {
                 const selectedTheme = item.getAttribute('data-theme');
-                html.setAttribute('data-theme', selectedTheme);
-                localStorage.setItem('theme', selectedTheme);
+                applyTheme(selectedTheme);
                 themeDropdown.classList.remove('active');
             });
         });
 
+        function applyTheme(theme) {
+            document.body.classList.add('theme-transition');
+            const oldThemeLink = document.querySelector('link[data-theme]');
+            if (oldThemeLink) {
+                oldThemeLink.remove();
+            }
+
+            const themeLink = document.createElement('link');
+            themeLink.rel = 'stylesheet';
+            themeLink.href = `/themes/${theme}.css`;
+            themeLink.setAttribute('data-theme', theme);
+            document.head.appendChild(themeLink);
+
+            localStorage.setItem('theme', theme);
+
+            setTimeout(() => {
+                document.body.classList.remove('theme-transition');
+            }, 300);
+        }
+
         const savedTheme = localStorage.getItem('theme') || 'default';
-        html.setAttribute('data-theme', savedTheme);
+        applyTheme(savedTheme);
 
         document.getElementById('proxyForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -197,7 +198,6 @@
             if (!input) return;
 
             const isUrl = isValidUrl(input);
-            const searxInstance = 'https://searx.be';
             const proxyUrl = `/api/proxy.js?q=${encodeURIComponent(input)}${!isUrl ? '&search=true' : ''}`;
 
             proxyContainer.classList.remove('hidden');
@@ -280,6 +280,7 @@
                 document.getElementById(`${tab.dataset.tab}Tab`).classList.add('active');
             });
         });
+
         adBlockToggle.addEventListener('click', () => {
             adBlockToggle.classList.toggle('toggle-on');
             adBlockToggle.classList.toggle('toggle-off');
