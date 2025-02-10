@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Curse | Main</title>
     <link rel="stylesheet" href="/theme/default.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"> <!-- SHAT -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
     <link rel="stylesheet" href="/visuals/dropdown.css">
+    <link rel="stylesheet" href="/themes/particles.css">
 </head>
 <body>
+    <canvas id="canvas"></canvas>
     <div class="cyber-bg">
         <div class="cyber-blob blob-1"></div>
         <div class="cyber-blob blob-2"></div>
@@ -62,9 +64,8 @@
             </h1>
             <p class="text-gray-300">Evade With Anonimity</p>
         </header>
-    </div>
 
-    <div class="max-w-2xl mx-auto cyber-card rounded-lg p-6 mb-8">
+        <div class="max-w-2xl mx-auto cyber-card rounded-lg p-6 mb-8">
             <form id="proxyForm" class="space-y-4">
                 <div class="relative">
                     <input 
@@ -111,36 +112,48 @@
                 <pre id="pageSource"></pre>
             </div>
         </div>
-
         <div class="max-w-2xl mx-auto cyber-card rounded-lg p-6">
-    <h2 class="text-2xl font-semibold mb-4 text-white">System Controls</h2>
-    <div class="space-y-4">
-        <div class="flex items-center justify-between">
-            <span class="text-gray-300">Ad Block</span>
-            <div id="adBlockToggle" class="toggle toggle-off">
-                <div class="circle"></div>
-            </div>
-        </div>
-        <div class="flex items-center justify-between">
-            <span class="text-gray-300">Ad Block Method</span>
-            <select id="adBlockMethod" class="cyber-input px-4 py-2 rounded-lg">
-                <option value="curse">Curse Block</option>
-                <option value="ublock">uBlock</option>
-            </select>
-        </div>
-        <div class="flex items-center justify-between">
-            <span class="text-gray-300">See Source</span>
-            <div id="seeSourceToggle" class="toggle toggle-off">
-                <div class="circle"></div>
+            <h2 class="text-2xl font-semibold mb-4 text-white">System Controls</h2>
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-300">Ad Block</span>
+                    <div id="adBlockToggle" class="toggle toggle-off">
+                        <div class="circle"></div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-300">Ad Block Method</span>
+                    <select id="adBlockMethod" class="cyber-input px-4 py-2 rounded-lg">
+                        <option value="curse">Curse Block</option>
+                        <option value="ublock">uBlock</option>
+                    </select>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-gray-300">See Source</span>
+                    <div id="seeSourceToggle" class="toggle toggle-off">
+                        <div class="circle"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
-    
+    <script src="/adblocker/curseblock.js"></script>
+    <script src="/adblocker/ublock.js"></script>
+    <script src="/themes/particles.js"></script>
     <script>
+        const html = document.documentElement;
+        const themeToggle = document.getElementById('themeToggle');
         const themeSelector = document.getElementById('themeSelector');
         const themeDropdown = document.getElementById('themeDropdown');
-        const html = document.documentElement;
+
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('light');
+            localStorage.setItem('theme', html.classList.contains('light') ? 'light' : 'dark');
+        });
+
+        if (localStorage.getItem('theme') === 'light') {
+            html.classList.add('light');
+        }
 
         themeSelector.addEventListener('click', () => {
             themeDropdown.classList.toggle('active');
