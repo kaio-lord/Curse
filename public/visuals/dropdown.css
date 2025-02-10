@@ -1,7 +1,6 @@
-/* Theme Dropdown Styles */
 #themeSelector {
     position: fixed;
-    top: 60px; /* Positioned below the light/dark mode button */
+    top: 60px; 
     right: 16px;
     background: linear-gradient(45deg, var(--primary-glow), var(--secondary-glow));
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -20,7 +19,7 @@
 
 .theme-dropdown {
     position: fixed;
-    top: 100px; /* Positioned below the theme selector button */
+    top: 100px;
     right: 16px;
     background: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(10px);
@@ -66,7 +65,6 @@
     border-color: var(--primary-glow);
 }
 
-/* Light mode adjustments */
 .light #themeSelector {
     background: linear-gradient(45deg, var(--primary-glow), var(--secondary-glow));
     border: 1px solid rgba(0, 0, 0, 0.1);
