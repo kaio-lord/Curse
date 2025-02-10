@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Curse | Main</title> <!-- I wanna die. -->
+    <title>Curse | Main</title>
     <link rel="stylesheet" href="/theme/default.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+    <link rel="stylesheet" href="/visuals/dropdown.css">
 </head>
 <body>
     <div class="cyber-bg">
@@ -28,14 +29,42 @@
             </svg>
         </button>
 
+        <button 
+            id="themeSelector" 
+            class="fixed top-16 right-4 cyber-button p-2 rounded-full text-white"
+            aria-label="Select theme"
+        >
+            🎨
+        </button>
+
+        <div id="themeDropdown" class="theme-dropdown">
+            <div class="theme-item" data-theme="default">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #1e3a8a, #1e40af);"></div>
+                Default
+            </div>
+            <div class="theme-item" data-theme="cyberpunk">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #ff00ff, #00ffff);"></div>
+                Cyberpunk
+            </div>
+            <div class="theme-item" data-theme="forest">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #2d7a4d, #4caf50);"></div>
+                Forest
+            </div>
+            <div class="theme-item" data-theme="sunset">
+                <div class="theme-preview" style="background: linear-gradient(135deg, #ff7e5f, #feb47b);"></div>
+                Sunset
+            </div>
+        </div>
+
         <header class="text-center mb-12">
             <h1 class="text-4xl font-bold mb-4 text-red" style="text-shadow: 0 0 10px var(--primary-glow)">
                 CURSE
             </h1>
             <p class="text-gray-300">Evade With Anonimity</p>
         </header>
+    </div>
 
-        <div class="max-w-2xl mx-auto cyber-card rounded-lg p-6 mb-8">
+    <div class="max-w-2xl mx-auto cyber-card rounded-lg p-6 mb-8">
             <form id="proxyForm" class="space-y-4">
                 <div class="relative">
                     <input 
@@ -108,191 +137,26 @@
     </div>
 </div>
     
-    <script src="/adblocker/curseblock.js"></script>
-    <script src="/adblocker/ublock.js"></script>
     <script>
-    const html = document.documentElement;
-    const themeToggle = document.getElementById('themeToggle');
-    const proxyContainer = document.getElementById('proxyContainer');
-    const proxyFrame = document.getElementById('proxyFrame');
-    const fullscreenBtn = document.getElementById('fullscreenBtn');
-    const minimizeBtn = document.getElementById('minimizeBtn');
-    const consoleContainer = document.getElementById('consoleContainer');
-    const consoleLog = document.getElementById('consoleLog');
-    const clearConsoleBtn = document.getElementById('clearConsoleBtn');
-    const detachConsoleBtn = document.getElementById('detachConsoleBtn');
-    const adBlockToggle = document.getElementById('adBlockToggle');
-    const adBlockMethod = document.getElementById('adBlockMethod');
-    const seeSourceToggle = document.getElementById('seeSourceToggle');
-    const logsTab = document.getElementById('logsTab');
-    const sourceTab = document.getElementById('sourceTab');
-    const pageSource = document.getElementById('pageSource');
-    const consoleTabs = document.querySelectorAll('.console-tab');
+        const themeSelector = document.getElementById('themeSelector');
+        const themeDropdown = document.getElementById('themeDropdown');
+        const html = document.documentElement;
 
-    let isAdBlockEnabled = false;
-    let isSeeSourceEnabled = false;
-    let isConsoleDetached = false;
-    let currentAdBlockMethod = 'curse'; 
-
-    function logToConsole(message, type = 'info') {
-        const logItem = document.createElement('div');
-        logItem.classList.add('log-item', type);
-        logItem.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
-        consoleLog.appendChild(logItem);
-        consoleLog.scrollTop = consoleLog.scrollHeight;
-    }
-
-    function isValidUrl(string) {
-        try {
-            new URL(string);
-            return true;
-        } catch (_) {
-            return false;
-        }
-    }
-
-    function loadAdBlockMethod() {
-        if (currentAdBlockMethod === 'curse') {
-            
-            if (typeof unblockAds === 'function') unblockAds();
-            
-            blockAds();
-            logToConsole('Curse Block enabled', 'info');
-        } else if (currentAdBlockMethod === 'ublock') {
-            
-            if (typeof unblockAds === 'function') unblockAds();
-       
-            blockAds();
-            logToConsole('uBlock enabled', 'info');
-        }
-    }
-
-    adBlockToggle.addEventListener('click', () => {
-        adBlockToggle.classList.toggle('toggle-on');
-        adBlockToggle.classList.toggle('toggle-off');
-        isAdBlockEnabled = adBlockToggle.classList.contains('toggle-on');
-
-        if (isAdBlockEnabled) {
-            loadAdBlockMethod(); 
-            logToConsole(`Ad Block enabled (${currentAdBlockMethod})`, 'info');
-        } else {
-            // Disable ad-blocking
-            if (currentAdBlockMethod === 'curse') {
-                unblockAds(); 
-            } else if (currentAdBlockMethod === 'ublock') {
-                unblockAds(); 
-            }
-            logToConsole('Ad Block disabled', 'info');
-        }
-    });
-
-    adBlockMethod.addEventListener('change', () => {
-        currentAdBlockMethod = adBlockMethod.value;
-        logToConsole(`Switched to ${currentAdBlockMethod}`, 'info');
-
-        if (isAdBlockEnabled) {
-            loadAdBlockMethod();
-        }
-    });
-
-    themeToggle.addEventListener('click', () => {
-        html.classList.toggle('light');
-        localStorage.setItem('theme', html.classList.contains('light') ? 'light' : 'dark');
-    });
-
-    if (localStorage.getItem('theme') === 'light') {
-        html.classList.add('light');
-    }
-
-    document.getElementById('proxyForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const input = document.getElementById('urlInput').value.trim();
-        if (!input) return;
-
-        const isUrl = isValidUrl(input);
-        const searxInstance = 'https://searx.be';
-        const proxyUrl = `/api/proxy.js?q=${encodeURIComponent(input)}${!isUrl ? '&search=true' : ''}`;
-
-        proxyContainer.classList.remove('hidden');
-        proxyFrame.src = proxyUrl;
-
-        proxyFrame.onload = () => {
-            const iframeDocument = proxyFrame.contentDocument || proxyFrame.contentWindow.document;
-            if (iframeDocument && isAdBlockEnabled) {
-                loadAdBlockMethod(); 
-            }
-        };
-
-        logToConsole(`Loading: ${input}`, 'info');
-    });
-
-    fullscreenBtn.addEventListener('click', () => {
-        proxyContainer.classList.add('fullscreen');
-        fullscreenBtn.classList.add('hidden');
-        minimizeBtn.classList.remove('hidden');
-        logToConsole('Entered fullscreen mode', 'info');
-    });
-
-    minimizeBtn.addEventListener('click', () => {
-        proxyContainer.classList.remove('fullscreen');
-        minimizeBtn.classList.add('hidden');
-        fullscreenBtn.classList.remove('hidden');
-        logToConsole('Exited fullscreen mode', 'info');
-    });
-
-    seeSourceToggle.addEventListener('click', () => {
-        seeSourceToggle.classList.toggle('toggle-on');
-        seeSourceToggle.classList.toggle('toggle-off');
-        isSeeSourceEnabled = seeSourceToggle.classList.contains('toggle-on');
-        consoleContainer.style.display = 'block';
-        consoleContainer.classList.add('visible');
-
-        if (isSeeSourceEnabled) {
-            fetch(proxyFrame.src)
-                .then(response => response.text())
-                .then(data => {
-                    pageSource.textContent = data;
-                    logToConsole(`Fetched source for ${proxyFrame.src}`, 'info');
-                })
-                .catch(error => {
-                    logToConsole(`Failed to fetch source: ${error}`, 'error');
-                });
-        } else {
-            consoleContainer.classList.remove('visible');
-            setTimeout(() => {
-                consoleContainer.style.display = 'none';
-            }, 300);
-        }
-    });
-
-    clearConsoleBtn.addEventListener('click', () => {
-        consoleLog.innerHTML = '';
-        logToConsole('Console cleared', 'info');
-    });
-
-    detachConsoleBtn.addEventListener('click', () => {
-        isConsoleDetached = !isConsoleDetached;
-        if (isConsoleDetached) {
-            consoleContainer.classList.add('detached');
-            detachConsoleBtn.textContent = 'Attach';
-        } else {
-            consoleContainer.classList.remove('detached');
-            detachConsoleBtn.textContent = 'Detach';
-        }
-    });
-
-    consoleTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            consoleTabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-
-            document.querySelectorAll('.console-content').forEach(content => {
-                content.classList.remove('active');
-            });
-
-            document.getElementById(`${tab.dataset.tab}Tab`).classList.add('active');
+        themeSelector.addEventListener('click', () => {
+            themeDropdown.classList.toggle('active');
         });
-    });
-</script>
+
+        document.querySelectorAll('.theme-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const selectedTheme = item.getAttribute('data-theme');
+                html.setAttribute('data-theme', selectedTheme);
+                localStorage.setItem('theme', selectedTheme);
+                themeDropdown.classList.remove('active');
+            });
+        });
+
+        const savedTheme = localStorage.getItem('theme') || 'default';
+        html.setAttribute('data-theme', savedTheme);
+    </script>
 </body>
 </html>
