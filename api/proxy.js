@@ -25,7 +25,7 @@ app.get('/api/proxy.js', async (req, res) => {
         let targetUrl = q;
 
         if (search === 'true') {
-            const searxInstance = 'https://searx.be';
+            const searxInstance = 'https://google.com';
             targetUrl = `${searxInstance}/search?q=${encodeURIComponent(q)}`;
         }
 
