@@ -28,3 +28,12 @@ Read SECURITY.md for security details.  It's not much but its the truth
 Static proxy do not like google.
 
 <img src="/assets/google.gif" alt="Google gif is supposed to be here..">
+
+
+## Honestly
+
+```text
+Honestly the default CSS and all that was made by some arabic guy on sourceforge.
+Sourceforge is a fucking gold mine of old arabic dudes that code what you can't I tell ya.
+Regardless, all that was coded for me was the /public/themes/default.css and the edits for that needed in /public/index.html
+```
