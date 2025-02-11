@@ -4,13 +4,13 @@ const path = require('path');
 const RateLimit = require('express-rate-limit');
 const app = express();
 const port = process.env.PORT || 3000;
-// set up rate limiter: maximum of 100 requests per 15 minutes
+// copilot added rate limiter below
 const limiter = RateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // max 100 requests per windowMs
+    windowMs: 15 * 60 * 1000, 
+    max: 500, // max 100 requests per windowMs  EDITED FOR 500
 });
 
-// apply rate limiter to all requests
+// copilot made it for all requests so idk if thats good or bad......
 app.use(limiter);
 
 app.use((req, res, next) => {
