@@ -25,4 +25,31 @@ _________ _______  _______
    | |   | (___) |/\____) |
    )_(   (_______)\_______)
 
-   With
+   With use of this API you agree to the following:
+
+    - This will NOT be used for illegal or unethical means
+    - The Read Before Use file shall NOT be deleted nor editted
+    - The files contained in /api/ shall NOT be deleted, only editted to necessity
+
+>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?
+
+|\     /|(  ____ \(  ___  )(  ____ \(  ____ \      (  ____ \|\     /|\__   __/(  __  \ (  ____ \
+| )   ( || (    \/| (   ) || (    \/| (    \/      | (    \/| )   ( |   ) (   | (  \  )| (    \/
+| |   | || (_____ | (___) || |      | (__          | |      | |   | |   | |   | |   ) || (__    
+| |   | |(_____  )|  ___  || | ____ |  __)         | | ____ | |   | |   | |   | |   | ||  __)   
+| |   | |      ) || (   ) || | \_  )| (            | | \_  )| |   | |   | |   | |   ) || (      
+| (___) |/\____) || )   ( || (___) || (____/\      | (___) || (___) |___) (___| (__/  )| (____/\
+(_______)\_______)|/     \|(_______)(_______/      (_______)(_______)\_______/(______/ (_______/
+
+
+  To use this properly within your static, or dynamic site, you can follow these steps:
+
+    - Create a redirect function within your site
+    - Specify said redirect to /api/proxy.js?q={url}
+    - Create a simple textbox, with the contents set to {url}
+    - Create a way such as the enter button or a go button to utilize the redirect
+
+  By the end of all this, you should be good to go.  
+  When testing, check that the URL switches to {yoursite}//api/proxy.js?q={https}%3A%2F%2F{site}
+
+>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?>?
