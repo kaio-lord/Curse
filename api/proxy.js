@@ -1,5 +1,5 @@
 const axios = require('axios');
-const express = require('express');
+const express = require('express'); //yay virginia servers (even UV uses the same shitty virginia servers, they just made their proxy do more cool things that my shitty shit shit cant
 const path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
