@@ -30,7 +30,7 @@ Static proxy do not like google.
 <img src="/assets/google.gif" alt="Google gif is supposed to be here..">
 
 
-## Honestly
+## Honesty
 
 ```text
 Honestly the default CSS and all that was made by some arabic guy on sourceforge.
