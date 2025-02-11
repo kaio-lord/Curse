@@ -27,4 +27,4 @@ Read SECURITY.md for security details.  It's not much but its the truth
 
 Static proxy do not like google.
 
-<img href="/assets/google.gif">
+<img src="/assets/google.gif" alt="Google gif is supposed to be here..">
