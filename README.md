@@ -19,3 +19,6 @@ Surf The Cursed Web Anonymous
 [![Deploy to Render](https://binbashbanana.github.io/deploy-buttons/buttons/remade/render.svg)](https://render.com/deploy?repo=https://github.com/Genera1Developer/Curse)
 [![Deploy to Cyclic](https://binbashbanana.github.io/deploy-buttons/buttons/remade/cyclic.svg)](https://app.cyclic.sh/api/app/deploy/Genera1Developer/Curse)
 
+```text
+Read SECURITY.md for security details.  It's not much but its the truth
+```
