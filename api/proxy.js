@@ -19,25 +19,18 @@ app.use((req, res, next) => {
 });
 
 app.get('/api/proxy.js', async (req, res) => {
-    const { q, search } = req.query;
+    const { q } = req.query;
 
     if (!q) {
         return res.status(400).json({ error: 'Missing query parameter: q' });
     }
 
     try {
-        let targetUrl = q;
-
-        if (search === 'true') {
-            const qwantSearchUrl = 'https://www.qwant.com';
-            targetUrl = `${qwantSearchUrl}/?l=en&q=${encodeURIComponent(q)}&t=web`;
-        }
-
-        const response = await axios.get(targetUrl, {
+        const response = await axios.get(q, {
             responseType: 'arraybuffer',
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
-                'Referer': targetUrl,
+                'Referer': q,
                 'Accept': req.headers['accept'] || '*/*',
                 'Accept-Language': req.headers['accept-language'] || 'en-US,en;q=0.9',
             }
@@ -57,11 +50,12 @@ app.get('/api/proxy.js', async (req, res) => {
                 return match;
             });
 
-            if (search === 'true') {
-                htmlContent = htmlContent.replace(/<a href="(https:\/\/www.qwant.com\/\?q=[^"]*)"/g, (match, url) => {
-                    return `<a href="/api/proxy.js?q=${encodeURIComponent(url)}"`;
-                });
-            }
+            htmlContent = htmlContent.replace(/url\((['"]?)([^'"]+)\1\)/g, (match, quote, url) => {
+                if (url.startsWith('http') || url.startsWith('//')) {
+                    return `url(${quote}/api/proxy.js?q=${encodeURIComponent(url)}${quote})`;
+                }
+                return match;
+            });
 
             res.send(htmlContent);
         } else {
