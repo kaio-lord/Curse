@@ -7,7 +7,7 @@ const port = process.env.PORT || 3000;
 
 const limiter = RateLimit({
     windowMs: 15 * 60 * 1000, 
-    max: 5000,
+    max: 500,
 });
 
 app.use(limiter);
@@ -29,8 +29,8 @@ app.get('/api/proxy.js', async (req, res) => {
         let targetUrl = q;
 
         if (search === 'true') {
-            const googleSearchUrl = 'https://www.google.com/search';
-            targetUrl = `${googleSearchUrl}?q=${encodeURIComponent(q)}`;
+            const qwantSearchUrl = 'https://www.qwant.com';
+            targetUrl = `${qwantSearchUrl}/?l=en&q=${encodeURIComponent(q)}&t=web`;
         }
 
         const response = await axios.get(targetUrl, {
@@ -58,7 +58,7 @@ app.get('/api/proxy.js', async (req, res) => {
             });
 
             if (search === 'true') {
-                htmlContent = htmlContent.replace(/<a href="\/url\?q=([^"]*)"/g, (match, url) => {
+                htmlContent = htmlContent.replace(/<a href="(https:\/\/www.qwant.com\/\?q=[^"]*)"/g, (match, url) => {
                     return `<a href="/api/proxy.js?q=${encodeURIComponent(url)}"`;
                 });
             }
