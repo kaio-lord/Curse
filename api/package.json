@@ -1,7 +1,7 @@
 {
-  "name": "curse-proxy",
-  "version": "1.0.0",
-  "description": "A web proxy with a cyberpunk-themed frontend.",
+  "name": "Curse-Static",
+  "version": "2.5.9",
+  "description": "Curse Static Web Proxy",
   "main": "proxy.js",
   "scripts": {
     "start": "node proxy.js",
