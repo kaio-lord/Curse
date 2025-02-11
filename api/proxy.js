@@ -1,16 +1,15 @@
 const axios = require('axios');
-const express = require('express'); //yay virginia servers (even UV uses the same shitty virginia servers, they just made their proxy do more cool things that my shitty shit shit cant
+const express = require('express');
 const path = require('path');
 const RateLimit = require('express-rate-limit');
 const app = express();
 const port = process.env.PORT || 3000;
-// copilot added rate limiter below
+
 const limiter = RateLimit({
     windowMs: 15 * 60 * 1000, 
-    max: 500, // max 100 requests per windowMs  EDITED FOR 500
+    max: 500,
 });
 
-// copilot made it for all requests so idk if thats good or bad......
 app.use(limiter);
 
 app.use((req, res, next) => {
@@ -30,8 +29,8 @@ app.get('/api/proxy.js', async (req, res) => {
         let targetUrl = q;
 
         if (search === 'true') {
-            const searxInstance = 'https://searx.be';
-            targetUrl = `${searxInstance}/search?q=${encodeURIComponent(q)}`;
+            const googleSearchUrl = 'https://www.google.com/search';
+            targetUrl = `${googleSearchUrl}?q=${encodeURIComponent(q)}`;
         }
 
         const response = await axios.get(targetUrl, {
@@ -44,9 +43,28 @@ app.get('/api/proxy.js', async (req, res) => {
             }
         });
 
-        res.setHeader('Content-Type', response.headers['content-type']);
+        let contentType = response.headers['content-type'];
+        res.setHeader('Content-Type', contentType);
         res.setHeader('Cache-Control', 'public, max-age=3600');
-        res.send(response.data);
+
+        if (contentType.includes('text/html')) {
+            let htmlContent = response.data.toString('utf-8');
+            htmlContent = htmlContent.replace(/<iframe([^>]*)src="([^"]*)"/g, (match, p1, p2) => {
+                return `<iframe${p1}src="/api/proxy.js?q=${encodeURIComponent(p2)}"`;
+            });
+            htmlContent = htmlContent.replace(/<link([^>]*)href="([^"]*)"/g, (match, p1, p2) => {
+                return `<link${p1}href="/api/proxy.js?q=${encodeURIComponent(p2)}"`;
+            });
+            htmlContent = htmlContent.replace(/<script([^>]*)src="([^"]*)"/g, (match, p1, p2) => {
+                return `<script${p1}src="/api/proxy.js?q=${encodeURIComponent(p2)}"`;
+            });
+            htmlContent = htmlContent.replace(/<img([^>]*)src="([^"]*)"/g, (match, p1, p2) => {
+                return `<img${p1}src="/api/proxy.js?q=${encodeURIComponent(p2)}"`;
+            });
+            res.send(htmlContent);
+        } else {
+            res.send(response.data);
+        }
     } catch (error) {
         console.error('Proxy error:', error.message);
         res.status(500).json({ error: 'Error fetching resource', details: error.message });
