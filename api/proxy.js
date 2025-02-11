@@ -1,20 +1,14 @@
 const axios = require('axios');
 const express = require('express');
+const path = require('path');
 const app = express();
 const port = process.env.PORT || 3000;
-
-app.use((req, res, next) => {
-    req.query = req.query || {};
-    next();
-});
-
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
     next();
 });
-
 
 app.get('/api/proxy.js', async (req, res) => {
     const { q, search } = req.query;
@@ -26,13 +20,11 @@ app.get('/api/proxy.js', async (req, res) => {
     try {
         let targetUrl = q;
 
-     
         if (search === 'true') {
             const searxInstance = 'https://searx.be';
             targetUrl = `${searxInstance}/search?q=${encodeURIComponent(q)}`;
         }
 
-    
         const response = await axios.get(targetUrl, {
             responseType: 'arraybuffer',
             headers: {
@@ -43,7 +35,6 @@ app.get('/api/proxy.js', async (req, res) => {
             }
         });
 
-    
         res.setHeader('Content-Type', response.headers['content-type']);
         res.setHeader('Cache-Control', 'public, max-age=3600');
         res.send(response.data);
@@ -53,9 +44,11 @@ app.get('/api/proxy.js', async (req, res) => {
     }
 });
 
-
 app.use(express.static('public'));
 
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 app.listen(port, () => {
     console.log(`Proxy server running on http://localhost:${port}`);
