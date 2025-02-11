@@ -22,3 +22,9 @@ Surf The Cursed Web Anonymous
 ```text
 Read SECURITY.md for security details.  It's not much but its the truth
 ```
+
+## Google...
+
+Static proxy do not like google.
+
+<img href="/assets/google.gif">
