@@ -49,18 +49,20 @@ app.get('/api/proxy.js', async (req, res) => {
 
         if (contentType.includes('text/html')) {
             let htmlContent = response.data.toString('utf-8');
-            htmlContent = htmlContent.replace(/<iframe([^>]*)src="([^"]*)"/g, (match, p1, p2) => {
-                return `<iframe${p1}src="/api/proxy.js?q=${encodeURIComponent(p2)}"`;
+
+            htmlContent = htmlContent.replace(/(href|src|action)="([^"]*)"/g, (match, attr, url) => {
+                if (url.startsWith('http') || url.startsWith('//')) {
+                    return `${attr}="/api/proxy.js?q=${encodeURIComponent(url)}"`;
+                }
+                return match;
             });
-            htmlContent = htmlContent.replace(/<link([^>]*)href="([^"]*)"/g, (match, p1, p2) => {
-                return `<link${p1}href="/api/proxy.js?q=${encodeURIComponent(p2)}"`;
-            });
-            htmlContent = htmlContent.replace(/<script([^>]*)src="([^"]*)"/g, (match, p1, p2) => {
-                return `<script${p1}src="/api/proxy.js?q=${encodeURIComponent(p2)}"`;
-            });
-            htmlContent = htmlContent.replace(/<img([^>]*)src="([^"]*)"/g, (match, p1, p2) => {
-                return `<img${p1}src="/api/proxy.js?q=${encodeURIComponent(p2)}"`;
-            });
+
+            if (search === 'true') {
+                htmlContent = htmlContent.replace(/<a href="\/url\?q=([^"]*)"/g, (match, url) => {
+                    return `<a href="/api/proxy.js?q=${encodeURIComponent(url)}"`;
+                });
+            }
+
             res.send(htmlContent);
         } else {
             res.send(response.data);
