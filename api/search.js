@@ -2,7 +2,7 @@ const axios = require('axios');
 const express = require('express');
 const app = express();
 
-const SERPAPI_KEY = process.env.SERPAPI_KEY || '96032230089168a9568ddcadc418937154b3bfc8a4a1a15f0478dc7c02f74bda';
+const SERPAPI_KEY = process.env.SERPAPI_KEY || '96032230089168a9568ddcadc418937154b3bfc8a4a1a15f0478dc7c02f74bda'; //Do as you wish with this.  It will change every once in a while
 const resolveRedirects = async (url) => {
     try {
         const response = await axios.get(url, {
