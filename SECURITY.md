@@ -12,3 +12,6 @@ Currently, every version is *technically* supported.
 ## Reporting a Vulnerability
 
 Any and all vulnerabilities found should be reported to [Issues](https://github.com/Genera1Developer/Curse/issues)
+
+You can bet your ass google is secure tho 🤷‍♂️
+<img src="/assets/google.gif" alt="Google gif is supposed to be here..">
