@@ -10,7 +10,6 @@ app.get('/api/search.js', async (req, res) => {
     }
 
     try {
-        
         const serpapiUrl = `https://serpapi.com/search.json?q=${encodeURIComponent(q)}&location=Austin,+Texas,+United+States&hl=en&gl=us&google_domain=google.com`;
         const response = await axios.get(serpapiUrl, {
             headers: {
@@ -28,6 +27,7 @@ app.get('/api/search.js', async (req, res) => {
             });
         }
 
+        // Generate HTML for search results
         let htmlContent = `
             <!DOCTYPE html>
             <html lang="en">
