@@ -2,7 +2,23 @@ const axios = require('axios');
 const express = require('express');
 const app = express();
 
-const SERPAPI_KEY = process.env.SERPAPI_KEY || '96032230089168a9568ddcadc418937154b3bfc8a4a1a15f0478dc7c02f74bda'; //Use how you want.  Too much and ill base64 encode it and change it daily.
+const SERPAPI_KEY = process.env.SERPAPI_KEY || '96032230089168a9568ddcadc418937154b3bfc8a4a1a15f0478dc7c02f74bda';
+const resolveRedirects = async (url) => {
+    try {
+        const response = await axios.get(url, {
+            maxRedirects: 0, 
+            validateStatus: (status) => status >= 200 && status < 400,
+        });
+
+        if (response.status >= 300 && response.status < 400 && response.headers.location) {
+            return response.headers.location;
+        }
+        return url;
+    } catch (error) {
+        console.error('Error resolving redirects:', error.message);
+        return url;
+    }
+};
 
 app.get('/api/search.js', async (req, res) => {
     const { q } = req.query;
@@ -28,11 +44,16 @@ app.get('/api/search.js', async (req, res) => {
         }
 
         const baseUrl = `${req.protocol}://${req.get('host')}`;
+        const linkRegex = /<a\s+(?:[^>]*?\s+)?href=(["'])(.*?)\1/gi;
+        let modifiedHtml = response.data;
+        let match;
 
-        const modifiedHtml = response.data.replace(/<a\s+(?:[^>]*?\s+)?href=(["'])(.*?)\1/gi, (match, quote, url) => {
-            const proxyUrl = `${baseUrl}/api/proxy.js?q=${encodeURIComponent(url)}`;
-            return `<a href="${proxyUrl}" target="iframe-result"`;
-        });
+        while ((match = linkRegex.exec(response.data)) !== null) {
+            const originalUrl = match[2];
+            const resolvedUrl = await resolveRedirects(originalUrl); // Resolve redirects
+            const proxyUrl = `${baseUrl}/api/proxy.js?q=${encodeURIComponent(resolvedUrl)}`;
+            modifiedHtml = modifiedHtml.replace(`href="${originalUrl}"`, `href="${proxyUrl}" target="iframe-result"`);
+        }
 
         res.send(modifiedHtml);
     } catch (error) {
@@ -49,7 +70,6 @@ app.get('/api/proxy.js', async (req, res) => {
     }
 
     try {
-        // Fetch the content of the proxied URL
         const response = await axios.get(q);
         res.send(response.data);
     } catch (error) {
