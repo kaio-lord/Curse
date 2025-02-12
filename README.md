@@ -37,3 +37,5 @@ Honestly the default CSS and all that was made by some arabic guy on sourceforge
 Sourceforge is a fucking gold mine of old arabic dudes that code what you can't I tell ya.
 Regardless, all that was coded for me was the /public/themes/default.css and the edits for that needed in /public/index.html
 ```
+
+This was coded in [Replit](https://replit.com)
