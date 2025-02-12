@@ -39,3 +39,7 @@ Regardless, all that was coded for me was the /public/themes/default.css and the
 ```
 
 This was coded in [Replit](https://replit.com) btw
+
+## Don't Be A Skid.
+
+<img src="/assets/dont-skid.webp" alt="How did you manage to fuck up a readme??">
