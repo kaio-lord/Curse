@@ -2,7 +2,7 @@ const axios = require('axios');
 const express = require('express');
 const app = express();
 
-const SERPAPI_KEY = 'b09677678e78fda0047875ac3d06b2b7c1c7e307fd1746aa1023e99629adcc71'; //yes, ya'll can use this.  If it gets out of hand however I will base64 encode this or js put it somwhere nobody can get to
+const SERPAPI_KEY = '96032230089168a9568ddcadc418937154b3bfc8a4a1a15f0478dc7c02f74bda'; //yes, ya'll can use this.  If it gets out of hand however I will base64 encode this or js put it somwhere nobody can get to
 
 app.get('/api/search.js', async (req, res) => {
     const { q } = req.query;
