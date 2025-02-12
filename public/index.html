@@ -92,6 +92,10 @@
             <iframe id="proxyFrame"></iframe>
         </div>
 
+        <div class="search-results-container hidden" id="searchResultsContainer">
+            <div id="searchResults"></div>
+        </div>
+
         <div class="console-container" id="consoleContainer">
             <div class="console-header">
                 <div class="console-tabs">
@@ -147,6 +151,8 @@
         const themeDropdown = document.getElementById('themeDropdown');
         const proxyContainer = document.getElementById('proxyContainer');
         const proxyFrame = document.getElementById('proxyFrame');
+        const searchResultsContainer = document.getElementById('searchResultsContainer');
+        const searchResults = document.getElementById('searchResults');
         const fullscreenBtn = document.getElementById('fullscreenBtn');
         const minimizeBtn = document.getElementById('minimizeBtn');
         const consoleContainer = document.getElementById('consoleContainer');
@@ -197,20 +203,35 @@
             if (!input) return;
 
             const isUrl = isValidUrl(input);
-            const searxInstance = 'https://searx.be';
-            const proxyUrl = `/api/proxy.js?q=${encodeURIComponent(input)}${!isUrl ? '&search=true' : ''}`;
 
-            proxyContainer.classList.remove('hidden');
-            proxyFrame.src = proxyUrl;
+            if (isUrl) {
+                // If it's a URL, proxy it
+                proxyContainer.classList.remove('hidden');
+                searchResultsContainer.classList.add('hidden');
+                proxyFrame.src = `/api/proxy.js?q=${encodeURIComponent(input)}`;
 
-            proxyFrame.onload = () => {
-                const iframeDocument = proxyFrame.contentDocument || proxyFrame.contentWindow.document;
-                if (iframeDocument && isAdBlockEnabled) {
-                    loadAdBlockMethod();
-                }
-            };
+                proxyFrame.onload = () => {
+                    const iframeDocument = proxyFrame.contentDocument || proxyFrame.contentWindow.document;
+                    if (iframeDocument && isAdBlockEnabled) {
+                        loadAdBlockMethod();
+                    }
+                };
 
-            logToConsole(`Loading: ${input}`, 'info');
+                logToConsole(`Loading: ${input}`, 'info');
+            } else {
+                // If it's a search query, fetch search results
+                proxyContainer.classList.add('hidden');
+                searchResultsContainer.classList.remove('hidden');
+                fetch(`/api/search.js?q=${encodeURIComponent(input)}`)
+                    .then(response => response.text())
+                    .then(data => {
+                        searchResults.innerHTML = data;
+                        logToConsole(`Fetched search results for: ${input}`, 'info');
+                    })
+                    .catch(error => {
+                        logToConsole(`Failed to fetch search results: ${error}`, 'error');
+                    });
+            }
         });
 
         fullscreenBtn.addEventListener('click', () => {
