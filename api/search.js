@@ -2,7 +2,7 @@ const axios = require('axios');
 const express = require('express');
 const app = express();
 
-const SERPAPI_KEY = process.env.SERPAPI_KEY || '96032230089168a9568ddcadc418937154b3bfc8a4a1a15f0478dc7c02f74bda'; //yes you can use this.  yes if it gets outa hand I will base64 encode it and regen it daily
+const SERPAPI_KEY = process.env.SERPAPI_KEY || '96032230089168a9568ddcadc418937154b3bfc8a4a1a15f0478dc7c02f74bda'; //Use how you want.  Too much and ill base64 encode it and change it daily.
 
 app.get('/api/search.js', async (req, res) => {
     const { q } = req.query;
@@ -27,8 +27,10 @@ app.get('/api/search.js', async (req, res) => {
             });
         }
 
+        const baseUrl = `${req.protocol}://${req.get('host')}`;
+
         const modifiedHtml = response.data.replace(/<a\s+(?:[^>]*?\s+)?href=(["'])(.*?)\1/gi, (match, quote, url) => {
-            const proxyUrl = `/api/proxy.js?q=${encodeURIComponent(url)}`;
+            const proxyUrl = `${baseUrl}/api/proxy.js?q=${encodeURIComponent(url)}`;
             return `<a href="${proxyUrl}" target="iframe-result"`;
         });
 
@@ -47,6 +49,7 @@ app.get('/api/proxy.js', async (req, res) => {
     }
 
     try {
+        // Fetch the content of the proxied URL
         const response = await axios.get(q);
         res.send(response.data);
     } catch (error) {
