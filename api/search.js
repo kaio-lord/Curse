@@ -2,6 +2,8 @@ const axios = require('axios');
 const express = require('express');
 const app = express();
 
+const SERPAPI_KEY = 'b09677678e78fda0047875ac3d06b2b7c1c7e307fd1746aa1023e99629adcc71'; //yes, ya'll can use this.  If it gets out of hand however I will base64 encode this or js put it somwhere nobody can get to
+
 app.get('/api/search.js', async (req, res) => {
     const { q } = req.query;
 
@@ -10,7 +12,7 @@ app.get('/api/search.js', async (req, res) => {
     }
 
     try {
-        const serpapiUrl = `https://serpapi.com/search.json?q=${encodeURIComponent(q)}&location=Austin,+Texas,+United+States&hl=en&gl=us&google_domain=google.com`;
+        const serpapiUrl = `https://serpapi.com/search.json?q=${encodeURIComponent(q)}&location=Austin,+Texas,+United+States&hl=en&gl=us&google_domain=google.com&api_key=${SERPAPI_KEY}`;
         const response = await axios.get(serpapiUrl, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
@@ -27,7 +29,6 @@ app.get('/api/search.js', async (req, res) => {
             });
         }
 
-        // Generate HTML for search results
         let htmlContent = `
             <!DOCTYPE html>
             <html lang="en">
