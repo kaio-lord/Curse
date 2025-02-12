@@ -137,9 +137,6 @@
         </div>
     </div>
 
-    <script src="/adblocker/curseblock.js"></script>
-    <script src="/adblocker/ublock.js"></script>
-    <script src="/themes/particles.js"></script>
     <script>
         const html = document.documentElement;
         const themeToggle = document.getElementById('themeToggle');
@@ -195,7 +192,18 @@
             e.preventDefault();
             const query = searchInput.value.trim();
             if (query) {
-                window.location.href = `/api/search.js?q=${encodeURIComponent(query)}`;
+                if (isValidUrl(query)) {
+                    let url = query;
+                    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                        url = `https://${url}`;
+                    }
+                    proxyFrame.src = `/api/proxy.js?q=${encodeURIComponent(url)}`;
+                    proxyContainer.classList.remove('hidden');
+                    logToConsole(`Opening URL: ${url}`, 'info');
+                } else {
+                    window.location.href = `/api/search.js?q=${encodeURIComponent(query)}`;
+                    logToConsole(`Searching for: ${query}`, 'info');
+                }
             }
         });
 
