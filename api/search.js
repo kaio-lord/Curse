@@ -2,7 +2,7 @@ const axios = require('axios');
 const express = require('express');
 const app = express();
 
-const SERPAPI_KEY = process.env.SERPAPI_KEY || '96032230089168a9568ddcadc418937154b3bfc8a4a1a15f0478dc7c02f74bda';
+const SERPAPI_KEY = process.env.SERPAPI_KEY || '96032230089168a9568ddcadc418937154b3bfc8a4a1a15f0478dc7c02f74bda'; //yes you can use this.  yes if it gets outa hand I will base64 encode it and regen it daily
 
 app.get('/api/search.js', async (req, res) => {
     const { q } = req.query;
@@ -27,10 +27,31 @@ app.get('/api/search.js', async (req, res) => {
             });
         }
 
-        res.send(response.data);
+        const modifiedHtml = response.data.replace(/<a\s+(?:[^>]*?\s+)?href=(["'])(.*?)\1/gi, (match, quote, url) => {
+            const proxyUrl = `/api/proxy.js?q=${encodeURIComponent(url)}`;
+            return `<a href="${proxyUrl}" target="iframe-result"`;
+        });
+
+        res.send(modifiedHtml);
     } catch (error) {
         console.error('Search error:', error.message);
         res.status(500).json({ error: 'Error fetching search results', details: error.message });
+    }
+});
+
+app.get('/api/proxy.js', async (req, res) => {
+    const { q } = req.query;
+
+    if (!q) {
+        return res.status(400).json({ error: 'Missing query parameter: q' });
+    }
+
+    try {
+        const response = await axios.get(q);
+        res.send(response.data);
+    } catch (error) {
+        console.error('Proxy error:', error.message);
+        res.status(500).json({ error: 'Error fetching URL', details: error.message });
     }
 });
 
