@@ -7,7 +7,7 @@ const port = process.env.PORT || 3000;
 
 const limiter = RateLimit({
     windowMs: 15 * 60 * 1000, 
-    max: 500, 
+    max: 500,
 });
 
 app.use(limiter);
@@ -27,9 +27,7 @@ app.get('/api/proxy.js', async (req, res) => {
 
     try {
         const baseUrl = new URL(q);
-        const fullUrl = new URL(req.query.path || '', baseUrl).toString();
-
-        const response = await axios.get(fullUrl, {
+        const response = await axios.get(baseUrl.toString(), {
             responseType: 'arraybuffer',
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
@@ -45,23 +43,31 @@ app.get('/api/proxy.js', async (req, res) => {
 
         if (contentType.includes('text/html')) {
             let htmlContent = response.data.toString('utf-8');
+
             htmlContent = htmlContent.replace(/(href|src|action)="([^"]*)"/g, (match, attr, url) => {
                 if (url.startsWith('http') || url.startsWith('//')) {
-                    return `${attr}="/api/proxy.js?q=${encodeURIComponent(new URL(url, baseUrl).toString())}"`;
+                    return `${attr}="/api/proxy.js?q=${encodeURIComponent(url)}"`;
                 } else if (url.startsWith('/')) {
-                    return `${attr}="/api/proxy.js?q=${encodeURIComponent(baseUrl.toString())}&path=${encodeURIComponent(url)}"`;
+                    const fullUrl = new URL(url, baseUrl).toString();
+                    return `${attr}="/api/proxy.js?q=${encodeURIComponent(fullUrl)}"`;
+                } else {
+                    return match;
                 }
-                return match;
             });
 
             // Replace all CSS url() references with the proxy URL
             htmlContent = htmlContent.replace(/url\((['"]?)([^'"]+)\1\)/g, (match, quote, url) => {
                 if (url.startsWith('http') || url.startsWith('//')) {
-                    return `url(${quote}/api/proxy.js?q=${encodeURIComponent(new URL(url, baseUrl).toString())}${quote})`;
+                    // Absolute URLs: Proxy them directly
+                    return `url(${quote}/api/proxy.js?q=${encodeURIComponent(url)}${quote})`;
                 } else if (url.startsWith('/')) {
-                    return `url(${quote}/api/proxy.js?q=${encodeURIComponent(baseUrl.toString())}&path=${encodeURIComponent(url)}${quote})`;
+                    // Relative URLs: Append them to the base URL
+                    const fullUrl = new URL(url, baseUrl).toString();
+                    return `url(${quote}/api/proxy.js?q=${encodeURIComponent(fullUrl)}${quote})`;
+                } else {
+                    // Leave other URLs unchanged
+                    return match;
                 }
-                return match;
             });
 
             res.send(htmlContent);
