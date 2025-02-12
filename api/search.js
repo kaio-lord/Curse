@@ -66,7 +66,7 @@ app.get('/api/search.js', async (req, res) => {
     }
 
     try {
-        const searxInstance = 'https://searxng.me';
+        const searxInstance = 'https://searxng.space';
         const targetUrl = `${searxInstance}/search?q=${encodeURIComponent(q)}&format=json`;
 
         const response = await axios.get(targetUrl, {
