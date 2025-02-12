@@ -137,6 +137,9 @@
         </div>
     </div>
 
+    <script src="/adblocker/curseblock.js"></script>
+    <script src="/adblocker/ublock.js"></script>
+    <script src="/themes/particles.js"></script>
     <script>
         const html = document.documentElement;
         const themeToggle = document.getElementById('themeToggle');
@@ -157,6 +160,8 @@
         const sourceTab = document.getElementById('sourceTab');
         const pageSource = document.getElementById('pageSource');
         const consoleTabs = document.querySelectorAll('.console-tab');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const minimizeBtn = document.getElementById('minimizeBtn');
 
         let isAdBlockEnabled = false;
         let isSeeSourceEnabled = false;
@@ -192,18 +197,17 @@
             e.preventDefault();
             const query = searchInput.value.trim();
             if (query) {
+                let url;
                 if (isValidUrl(query)) {
-                    let url = query;
-                    if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                        url = `https://${url}`;
-                    }
+                    url = query.startsWith('http://') || query.startsWith('https://') ? query : `https://${query}`;
                     proxyFrame.src = `/api/proxy.js?q=${encodeURIComponent(url)}`;
-                    proxyContainer.classList.remove('hidden');
                     logToConsole(`Opening URL: ${url}`, 'info');
                 } else {
-                    window.location.href = `/api/search.js?q=${encodeURIComponent(query)}`;
+                    url = `/api/search.js?q=${encodeURIComponent(query)}`;
+                    proxyFrame.src = url;
                     logToConsole(`Searching for: ${query}`, 'info');
                 }
+                proxyContainer.classList.remove('hidden');
             }
         });
 
