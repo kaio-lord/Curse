@@ -10,8 +10,8 @@ app.get('/api/search.js', async (req, res) => {
     }
 
     try {
+        
         const serpapiUrl = `https://serpapi.com/search.json?q=${encodeURIComponent(q)}&location=Austin,+Texas,+United+States&hl=en&gl=us&google_domain=google.com`;
-
         const response = await axios.get(serpapiUrl, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
@@ -20,12 +20,11 @@ app.get('/api/search.js', async (req, res) => {
 
         const searchResults = response.data;
 
-        
         if (!searchResults.organic_results || !Array.isArray(searchResults.organic_results)) {
             return res.status(500).json({ 
                 error: 'Invalid search results format', 
                 details: 'No organic results found', 
-                response: searchResults 
+                response: searchResults
             });
         }
 
