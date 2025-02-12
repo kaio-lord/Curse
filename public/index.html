@@ -64,13 +64,13 @@
             <p class="text-gray-300">Free AdBlocker Included</p>
         </header>
         <div class="max-w-2xl mx-auto cyber-card rounded-lg p-6 mb-8">
-            <form id="proxyForm" class="space-y-4">
+            <form id="searchForm" class="space-y-4">
                 <div class="relative">
                     <input 
                         type="text" 
-                        id="urlInput" 
+                        id="searchInput" 
                         name="q"
-                        placeholder="Enter URL or search query..."
+                        placeholder="Enter search query..."
                         class="cyber-input w-full px-4 py-3 rounded-lg outline-none text-white placeholder-gray-400"
                         required
                     >
@@ -78,7 +78,7 @@
                         type="submit"
                         class="absolute right-2 top-2 cyber-button px-4 py-1 rounded-lg text-white"
                     >
-                        Go
+                        Search
                     </button>
                 </div>
             </form>
@@ -90,10 +90,6 @@
                 <button class="control-btn hidden" id="minimizeBtn">⤡</button>
             </div>
             <iframe id="proxyFrame"></iframe>
-        </div>
-
-        <div class="search-results-container hidden" id="searchResultsContainer">
-            <div id="searchResults"></div>
         </div>
 
         <div class="console-container" id="consoleContainer">
@@ -151,10 +147,8 @@
         const themeDropdown = document.getElementById('themeDropdown');
         const proxyContainer = document.getElementById('proxyContainer');
         const proxyFrame = document.getElementById('proxyFrame');
-        const searchResultsContainer = document.getElementById('searchResultsContainer');
-        const searchResults = document.getElementById('searchResults');
-        const fullscreenBtn = document.getElementById('fullscreenBtn');
-        const minimizeBtn = document.getElementById('minimizeBtn');
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = document.getElementById('searchInput');
         const consoleContainer = document.getElementById('consoleContainer');
         const consoleLog = document.getElementById('consoleLog');
         const clearConsoleBtn = document.getElementById('clearConsoleBtn');
@@ -197,40 +191,11 @@
         const savedTheme = localStorage.getItem('theme') || 'default';
         html.setAttribute('data-theme', savedTheme);
 
-        document.getElementById('proxyForm').addEventListener('submit', async function(e) {
+        searchForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            const input = document.getElementById('urlInput').value.trim();
-            if (!input) return;
-
-            const isUrl = isValidUrl(input);
-
-            if (isUrl) {
-                // If it's a URL, proxy it
-                proxyContainer.classList.remove('hidden');
-                searchResultsContainer.classList.add('hidden');
-                proxyFrame.src = `/api/proxy.js?q=${encodeURIComponent(input)}`;
-
-                proxyFrame.onload = () => {
-                    const iframeDocument = proxyFrame.contentDocument || proxyFrame.contentWindow.document;
-                    if (iframeDocument && isAdBlockEnabled) {
-                        loadAdBlockMethod();
-                    }
-                };
-
-                logToConsole(`Loading: ${input}`, 'info');
-            } else {
-                // If it's a search query, fetch search results
-                proxyContainer.classList.add('hidden');
-                searchResultsContainer.classList.remove('hidden');
-                fetch(`/api/search.js?q=${encodeURIComponent(input)}`)
-                    .then(response => response.text())
-                    .then(data => {
-                        searchResults.innerHTML = data;
-                        logToConsole(`Fetched search results for: ${input}`, 'info');
-                    })
-                    .catch(error => {
-                        logToConsole(`Failed to fetch search results: ${error}`, 'error');
-                    });
+            const query = searchInput.value.trim();
+            if (query) {
+                window.location.href = `/api/search.js?q=${encodeURIComponent(query)}`;
             }
         });
 
@@ -319,7 +284,7 @@
                 logToConsole('Ad Block disabled', 'info');
             }
         });
-
+        
         adBlockMethod.addEventListener('change', () => {
             currentAdBlockMethod = adBlockMethod.value;
             logToConsole(`Switched to ${currentAdBlockMethod}`, 'info');
