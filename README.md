@@ -49,4 +49,5 @@ This was coded in [Replit](https://replit.com) btw
 ## This Is Open Source Though
 
 This is open source so you all *can* use my code.  It's not skidding if it's public.
-That being said all this code was made myself through painful hours of work, so please give credits
+
+That being said all this code was made myself through painful hours of work, so still give credits where due!
