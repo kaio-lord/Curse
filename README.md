@@ -43,3 +43,10 @@ This was coded in [Replit](https://replit.com) btw
 ## Don't Be A Skid.
 
 <img src="/assets/dont-skid.webp" alt="How did you manage to fuck up a readme??">
+
+
+
+## This Is Open Source Though
+
+This is open source so you all *can* use my code.  It's not skidding if it's public.
+That being said all this code was made myself through painful hours of work, so please give credits
