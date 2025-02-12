@@ -10,10 +10,9 @@ app.get('/api/search.js', async (req, res) => {
     }
 
     try {
-        const searxInstance = 'https://searxng.space'; 
-        const targetUrl = `${searxInstance}/search?q=${encodeURIComponent(q)}&format=json`;
+        const serpapiUrl = `https://serpapi.com/search.json?q=${encodeURIComponent(q)}&location=Austin,+Texas,+United+States&hl=en&gl=us&google_domain=google.com`;
 
-        const response = await axios.get(targetUrl, {
+        const response = await axios.get(serpapiUrl, {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3',
             }
@@ -21,8 +20,13 @@ app.get('/api/search.js', async (req, res) => {
 
         const searchResults = response.data;
 
-        if (!searchResults.results || !Array.isArray(searchResults.results)) {
-            return res.status(500).json({ error: 'Invalid search results format', details: 'No results found' });
+        
+        if (!searchResults.organic_results || !Array.isArray(searchResults.organic_results)) {
+            return res.status(500).json({ 
+                error: 'Invalid search results format', 
+                details: 'No organic results found', 
+                response: searchResults 
+            });
         }
 
         let htmlContent = `
@@ -44,13 +48,13 @@ app.get('/api/search.js', async (req, res) => {
                 <h1>Search Results for "${q}"</h1>
         `;
 
-        searchResults.results.forEach(result => {
-            if (result.url && result.title && result.content) {
+        searchResults.organic_results.forEach(result => {
+            if (result.link && result.title && result.snippet) {
                 htmlContent += `
                     <div class="result">
-                        <div class="title"><a href="/api/proxy.js?q=${encodeURIComponent(result.url)}">${result.title}</a></div>
-                        <div class="url">${result.url}</div>
-                        <div class="snippet">${result.content}</div>
+                        <div class="title"><a href="/api/proxy.js?q=${encodeURIComponent(result.link)}">${result.title}</a></div>
+                        <div class="url">${result.link}</div>
+                        <div class="snippet">${result.snippet}</div>
                     </div>
                 `;
             }
