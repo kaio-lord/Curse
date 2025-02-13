@@ -53,3 +53,4 @@ This is open source so you all *can* use my code.  Your a skid tho
 That being said all this code was made myself through painful hours of work, so still give credits where due!
 
 ## To everyone saying my proxy is ass...
+<img src="/assets/skid.gif" alt="Thanks Oreo">
