@@ -48,6 +48,8 @@ This was coded in [Replit](https://replit.com) btw
 
 ## This Is Open Source Though
 
-This is open source so you all *can* use my code.  It's not skidding if it's public.
+This is open source so you all *can* use my code.  Your a skid tho
 
 That being said all this code was made myself through painful hours of work, so still give credits where due!
+
+## To everyone saying my proxy is ass...
