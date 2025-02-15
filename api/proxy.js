@@ -55,17 +55,15 @@ app.get('/api/proxy.js', async (req, res) => {
                 }
             });
 
-            // Replace all CSS url() references with the proxy URL
+            
             htmlContent = htmlContent.replace(/url\((['"]?)([^'"]+)\1\)/g, (match, quote, url) => {
                 if (url.startsWith('http') || url.startsWith('//')) {
-                    // Absolute URLs: Proxy them directly
                     return `url(${quote}/api/proxy.js?q=${encodeURIComponent(url)}${quote})`;
                 } else if (url.startsWith('/')) {
-                    // Relative URLs: Append them to the base URL
+                    
                     const fullUrl = new URL(url, baseUrl).toString();
                     return `url(${quote}/api/proxy.js?q=${encodeURIComponent(fullUrl)}${quote})`;
                 } else {
-                    // Leave other URLs unchanged
                     return match;
                 }
             });
