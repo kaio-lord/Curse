@@ -3,6 +3,7 @@ const axios = require('axios');
 const config = {
   api: {
     externalResolver: true,
+    responseLimit: '10mb',
   },
 };
 
@@ -14,7 +15,7 @@ async function handler(req, res) {
     });
   }
 
-  const { q, output = 'json' } = req.query;
+  const { q } = req.query;
 
   if (!q) {
     return res.status(400).json({ 
@@ -32,25 +33,64 @@ async function handler(req, res) {
       q: Array.isArray(q) ? q[0] : q,
       kl: 'us-en',
       api_key: apiKey,
-      output: output
+      output: 'html'
     };
 
     const response = await axios.get(searchUrl, { 
       params,
       headers: {
-        'Accept': output === 'html' ? 'text/html' : 'application/json',
+        'Accept': 'text/html',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
       }
     });
+    const baseUrl = `${req.headers['x-forwarded-proto'] || 'http'}://${req.headers.host}`;
 
-    if (output === 'html') {
-      res.setHeader('Content-Type', 'text/html');
-      return res.status(200).send(response.data);
-    }
+    let modifiedHtml = response.data;
 
-    return res.status(200).json({
-      success: true,
-      data: response.data
-    });
+    // Replace href links
+    modifiedHtml = modifiedHtml.replace(
+      /href=["'](https?:\/\/[^"']+)["']/gi,
+      (match, url) => `href="/api/proxy.js?q=${encodeURIComponent(url)}"`
+    );
+
+    modifiedHtml = modifiedHtml.replace(
+      /src=["'](https?:\/\/[^"']+)["']/gi,
+      (match, url) => `src="/api/proxy.js?q=${encodeURIComponent(url)}"`
+    );
+
+    modifiedHtml = modifiedHtml.replace(
+      /(https?:\/\/[^\s<>"']+)/g,
+      (url) => `/api/proxy.js?q=${encodeURIComponent(url)}`
+    );
+    const htmlWrapper = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <base target="_self">
+          <title>Search Results</title>
+          <style>
+            body { 
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+              line-height: 1.6;
+              margin: 0;
+              padding: 20px;
+            }
+            a { color: #0066cc; text-decoration: none; }
+            a:hover { text-decoration: underline; }
+            img { max-width: 100%; height: auto; }
+          </style>
+        </head>
+        <body>
+          ${modifiedHtml}
+        </body>
+      </html>
+    `;
+
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('Cache-Control', 's-maxage=10, stale-while-revalidate');
+    return res.status(200).send(htmlWrapper);
 
   } catch (error) {
     console.error('Search API error:', error.message);
@@ -58,10 +98,28 @@ async function handler(req, res) {
     const statusCode = error.response?.status || 500;
     const errorMessage = error.response?.data?.error || error.message || 'Internal server error';
 
-    return res.status(statusCode).json({
-      success: false,
-      error: errorMessage
-    });
+    const errorHtml = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Error</title>
+          <style>
+            body { 
+              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+              padding: 20px;
+              color: #ff0000;
+            }
+          </style>
+        </head>
+        <body>
+          <h1>Error</h1>
+          <p>${errorMessage}</p>
+        </body>
+      </html>
+    `;
+
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    return res.status(statusCode).send(errorHtml);
   }
 }
 
