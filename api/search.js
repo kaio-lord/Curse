@@ -2,9 +2,15 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
 
 type SearchResponse = {
-  success?: boolean;
+  success: boolean;
   data?: any;
   error?: string;
+}
+
+export const config = {
+  api: {
+    externalResolver: true,
+  },
 };
 
 export default async function handler(
@@ -14,33 +20,42 @@ export default async function handler(
   if (req.method !== 'GET') {
     return res.status(405).json({ 
       success: false, 
-      error: 'Method not allowed' 
+      error: 'Method not allowed'
     });
   }
 
-  const { q } = req.query;
+  const { q, output = 'json' } = req.query;
 
   if (!q) {
     return res.status(400).json({ 
       success: false, 
-      error: 'Missing query parameter: q' 
+      error: 'Missing query parameter: q'
     });
   }
 
   const apiKey = process.env.SERPAPI_KEY || '96032230089168a9568ddcadc418937154b3bfc8a4a1a15f0478dc7c02f74bda';
 
   try {
-    const response = await axios.get('https://serpapi.com/search.json', {
-      params: {
-        engine: 'duckduckgo',
-        q: q,
-        kl: 'us-en',
-        api_key: apiKey
-      },
+    const searchUrl = 'https://serpapi.com/search.json';
+    const params = {
+      engine: 'duckduckgo',
+      q: Array.isArray(q) ? q[0] : q,
+      kl: 'us-en',
+      api_key: apiKey,
+      output: output
+    };
+
+    const response = await axios.get(searchUrl, { 
+      params,
       headers: {
-        'Accept': 'application/json'
+        'Accept': output === 'html' ? 'text/html' : 'application/json',
       }
     });
+
+    if (output === 'html') {
+      res.setHeader('Content-Type', 'text/html');
+      return res.status(200).send(response.data);
+    }
 
     return res.status(200).json({
       success: true,
@@ -48,8 +63,8 @@ export default async function handler(
     });
 
   } catch (error: any) {
-    console.error('Search API error:', error);
-
+    console.error('Search API error:', error.message);
+    
     const statusCode = error.response?.status || 500;
     const errorMessage = error.response?.data?.error || error.message || 'Internal server error';
 
