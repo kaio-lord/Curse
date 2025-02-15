@@ -1,22 +1,12 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import axios from 'axios';
+const axios = require('axios');
 
-type SearchResponse = {
-  success: boolean;
-  data?: any;
-  error?: string;
-}
-
-export const config = {
+const config = {
   api: {
     externalResolver: true,
   },
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<SearchResponse>
-) {
+async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ 
       success: false, 
@@ -62,7 +52,7 @@ export default async function handler(
       data: response.data
     });
 
-  } catch (error: any) {
+  } catch (error) {
     console.error('Search API error:', error.message);
     
     const statusCode = error.response?.status || 500;
@@ -74,3 +64,6 @@ export default async function handler(
     });
   }
 }
+
+module.exports = handler;
+module.exports.config = config;
