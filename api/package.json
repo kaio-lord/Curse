@@ -2,6 +2,7 @@
   "name": "Curse-Static",
   "version": "2.5.9",
   "description": "Curse Static Web Proxy",
+  "type": "module",
   "main": "proxy.js",
   "scripts": {
     "start": "node proxy.js",
@@ -14,5 +15,8 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
