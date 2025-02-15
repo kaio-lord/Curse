@@ -1,15 +1,17 @@
-const axios = require('axios');
+import axios from 'axios';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+
   const { q } = req.query;
 
   if (!q) {
     return res.status(400).json({ error: 'Missing query parameter: q' });
   }
-  const apiKey = process.env.SERPAPI_KEY;
+
+  const apiKey = process.env.61e1c5f58bca02da965a1e5184cca19a9b36699a35b3b74e0970b24bb705e16a;
 
   try {
     const searchUrl = 'https://serpapi.com/search.json';
@@ -20,6 +22,7 @@ export default async function handler(req, res) {
       api_key: apiKey,
       output: 'html'
     };
+
     const response = await axios.get(searchUrl, { 
       params,
       headers: {
@@ -44,6 +47,7 @@ export default async function handler(req, res) {
         replace: (url) => `/api/proxy?q=${encodeURIComponent(url)}`
       }
     ];
+
     urlReplacements.forEach(({ pattern, replace }) => {
       processedHtml = processedHtml.replace(pattern, replace);
     });
@@ -84,7 +88,7 @@ export default async function handler(req, res) {
       <!DOCTYPE html>
       <html>
       <head>
-        <title>Search Error</title>
+        <title>Curse | Error</title>
         <style>
           body { 
             font-family: Arial, sans-serif;
@@ -94,7 +98,7 @@ export default async function handler(req, res) {
         </style>
       </head>
       <body>
-        <h1>Search Error</h1>
+        <h1>U Broke It!!</h1>
         <p>An error occurred while processing your search: ${error.message}</p>
         <p>Please try again later or contact support.</p>
       </body>
@@ -104,8 +108,6 @@ export default async function handler(req, res) {
     res.status(500).send(errorHtml);
   }
 }
-
-// Vercel fix??
 export const config = {
   api: {
     responseLimit: false,
