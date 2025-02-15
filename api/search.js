@@ -1,59 +1,61 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
 
-interface SearchResult {
-  title: string;
-  link: string;
-  snippet: string;
-}
-
-interface SearchResponse {
-  organic_results?: SearchResult[];
+type SearchResponse = {
+  success?: boolean;
+  data?: any;
   error?: string;
-  details?: string;
-}
-
-const SERPAPI_KEY = process.env.SERPAPI_KEY || '96032230089168a9568ddcadc418937154b3bfc8a4a1a15f0478dc7c02f74bda';
+};
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<SearchResponse>
 ) {
   if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ 
+      success: false, 
+      error: 'Method not allowed' 
+    });
   }
 
   const { q } = req.query;
 
   if (!q) {
-    return res.status(400).json({ error: 'Missing query parameter: q' });
+    return res.status(400).json({ 
+      success: false, 
+      error: 'Missing query parameter: q' 
+    });
   }
 
-  try {
-    const searchUrl = `https://serpapi.com/search.json?engine=duckduckgo&q=${encodeURIComponent(String(q))}&kl=us-en&api_key=${SERPAPI_KEY}`;
+  const apiKey = process.env.SERPAPI_KEY || '96032230089168a9568ddcadc418937154b3bfc8a4a1a15f0478dc7c02f74bda';
 
-    const response = await axios.get(searchUrl, {
+  try {
+    const response = await axios.get('https://serpapi.com/search.json', {
+      params: {
+        engine: 'duckduckgo',
+        q: q,
+        kl: 'us-en',
+        api_key: apiKey
+      },
       headers: {
-        'Accept': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+        'Accept': 'application/json'
       }
     });
 
-    return res.status(200).json(response.data);
+    return res.status(200).json({
+      success: true,
+      data: response.data
+    });
 
   } catch (error: any) {
-    console.error('Search error:', error.message);
-    
-    if (axios.isAxiosError(error)) {
-      return res.status(error.response?.status || 500).json({
-        error: 'Search API error',
-        details: error.response?.data?.error || error.message
-      });
-    }
+    console.error('Search API error:', error);
 
-    return res.status(500).json({
-      error: 'Internal server error',
-      details: error.message
+    const statusCode = error.response?.status || 500;
+    const errorMessage = error.response?.data?.error || error.message || 'Internal server error';
+
+    return res.status(statusCode).json({
+      success: false,
+      error: errorMessage
     });
   }
 }
