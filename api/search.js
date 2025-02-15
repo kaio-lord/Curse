@@ -4,14 +4,12 @@ export default async function handler(req, res) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
-
   const { q } = req.query;
 
   if (!q) {
     return res.status(400).json({ error: 'Missing query parameter: q' });
   }
-
-  const apiKey = process.env.SERPAPI_KEY || '96032230089168a9568ddcadc418937154b3bfc8a4a1a15f0478dc7c02f74bda';
+  const apiKey = process.env.SERPAPI_KEY;
 
   try {
     const searchUrl = 'https://serpapi.com/search.json';
@@ -22,7 +20,6 @@ export default async function handler(req, res) {
       api_key: apiKey,
       output: 'html'
     };
-
     const response = await axios.get(searchUrl, { 
       params,
       headers: {
@@ -31,35 +28,33 @@ export default async function handler(req, res) {
       }
     });
 
-    const baseUrl = `${req.headers['x-forwarded-proto'] || 'http'}://${req.headers.host}`;
-
     let processedHtml = response.data;
 
     const urlReplacements = [
       { 
         pattern: /href=["']([^"']+)["']/gi, 
-        replace: (match, url) => `href="/api/proxy.js?q=${encodeURIComponent(url)}"`
+        replace: (match, url) => `href="/api/proxy?q=${encodeURIComponent(url)}"`
       },
       { 
         pattern: /src=["']([^"']+)["']/gi, 
-        replace: (match, url) => `src="/api/proxy.js?q=${encodeURIComponent(url)}"`
+        replace: (match, url) => `src="/api/proxy?q=${encodeURIComponent(url)}"`
       },
       { 
         pattern: /(https?:\/\/[^\s<>"']+)/gi, 
-        replace: (url) => `/api/proxy.js?q=${encodeURIComponent(url)}`
+        replace: (url) => `/api/proxy?q=${encodeURIComponent(url)}`
       }
     ];
-
     urlReplacements.forEach(({ pattern, replace }) => {
       processedHtml = processedHtml.replace(pattern, replace);
     });
+
     const fullHtml = `
       <!DOCTYPE html>
       <html lang="en">
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Search Results</title>
+        <title>Search Results for "${q}"</title>
         <style>
           body { 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -73,6 +68,7 @@ export default async function handler(req, res) {
         </style>
       </head>
       <body>
+        <h1>Search Results for "${q}"</h1>
         ${processedHtml}
       </body>
       </html>
@@ -99,7 +95,8 @@ export default async function handler(req, res) {
       </head>
       <body>
         <h1>Search Error</h1>
-        <p>${error.message}</p>
+        <p>An error occurred while processing your search: ${error.message}</p>
+        <p>Please try again later or contact support.</p>
       </body>
       </html>
     `;
@@ -108,6 +105,7 @@ export default async function handler(req, res) {
   }
 }
 
+// Vercel fix??
 export const config = {
   api: {
     responseLimit: false,
